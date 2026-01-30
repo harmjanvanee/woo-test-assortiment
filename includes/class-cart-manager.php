@@ -19,8 +19,6 @@ class WTA_Cart_Manager
 
     private function __construct()
     {
-        add_filter('woocommerce_add_to_cart_validation', array($this, 'validate_add_to_cart'), 10, 3);
-
         // Grouping filters
         add_filter('woocommerce_cart_item_class', array($this, 'add_cart_item_group_class'), 10, 3);
         add_filter('woocommerce_cart_item_name', array($this, 'add_cart_item_group_indent'), 10, 3);
@@ -59,15 +57,6 @@ class WTA_Cart_Manager
 
         foreach ($variant_ids as $index => $variant_id) {
             $parent_id = $product_ids[$index];
-            $exists = self::check_if_parent_in_cart($parent_id);
-
-            if ($exists) {
-                if ($behavior === 'block') {
-                    continue; // Skip already in cart if blocking
-                } else {
-                    self::remove_parent_from_cart($parent_id);
-                }
-            }
 
             // Using WC() global to add to cart with parent reference
             $cart_item_data = array();
@@ -112,18 +101,6 @@ class WTA_Cart_Manager
             wp_send_json_error(array('message' => __('Geen testverpakking gevonden voor dit product.', 'woo-test-assortiment')));
         }
 
-        $behavior = get_option('wta_cart_behavior', 'block');
-        $exists = self::check_if_parent_in_cart($product_id);
-
-        if ($exists) {
-            if ($behavior === 'block') {
-                wp_send_json_error(array('message' => get_option('wta_error_message', __('Je kunt per product maar 1 testverpakking kiezen.', 'woo-test-assortiment'))));
-            } else {
-                // Replace: Remove existing parent products first
-                self::remove_parent_from_cart($product_id);
-            }
-        }
-
         $added = WC()->cart->add_to_cart($product_id, 1, $test_variant_id);
 
         if ($added) {
@@ -140,49 +117,7 @@ class WTA_Cart_Manager
         wp_die();
     }
 
-    /**
-     * Enforce rule when adding normally (fallback if they try to bypass AJAX)
-     */
-    public function validate_add_to_cart($passed, $product_id, $quantity)
-    {
-        $behavior = get_option('wta_cart_behavior', 'block');
-        if ($behavior !== 'block') {
-            return $passed;
-        }
 
-        $exists = self::check_if_parent_in_cart($product_id);
-        if ($exists) {
-            wc_add_notice(get_option('wta_error_message', __('Je kunt per product maar 1 testverpakking kiezen.', 'woo-test-assortiment')), 'error');
-            return false;
-        }
-
-        return $passed;
-    }
-
-    /**
-     * Helper: Check if any variation of this parent is in cart
-     */
-    public static function check_if_parent_in_cart($parent_id)
-    {
-        foreach (WC()->cart->get_cart() as $cart_item_key => $values) {
-            if ($values['product_id'] == $parent_id) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Helper: Remove all variations of this parent from cart
-     */
-    public static function remove_parent_from_cart($parent_id)
-    {
-        foreach (WC()->cart->get_cart() as $cart_item_key => $values) {
-            if ($values['product_id'] == $parent_id) {
-                WC()->cart->remove_cart_item($cart_item_key);
-            }
-        }
-    }
     /**
      * Add class to cart items for grouping display
      */

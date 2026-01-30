@@ -83,31 +83,7 @@ class WTA_Settings_Page extends WC_Settings_Page
                 'type' => 'sectionend',
                 'id' => 'wta_id_section',
             ),
-            array(
-                'title' => __('Winkelwagen Gedrag', 'woo-test-assortiment'),
-                'type' => 'title',
-                'id' => 'wta_cart_section',
-            ),
-            array(
-                'title' => __('Gedrag bij dubbele toevoeging', 'woo-test-assortiment'),
-                'id' => 'wta_cart_behavior',
-                'type' => 'select',
-                'default' => 'block',
-                'options' => array(
-                    'block' => __('Blokkeren met melding', 'woo-test-assortiment'),
-                    'replace' => __('Vervangen bestaand item', 'woo-test-assortiment'),
-                ),
-            ),
-            array(
-                'title' => __('Foutmelding bij blokkeren', 'woo-test-assortiment'),
-                'id' => 'wta_error_message',
-                'type' => 'text',
-                'default' => __('Je kunt per product maar 1 testverpakking kiezen.', 'woo-test-assortiment'),
-            ),
-            array(
-                'type' => 'sectionend',
-                'id' => 'wta_cart_section',
-            ),
+
             array(
                 'title' => __('Coupon Instellingen', 'woo-test-assortiment'),
                 'type' => 'title',
