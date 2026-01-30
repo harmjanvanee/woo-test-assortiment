@@ -23,6 +23,56 @@ class WTA_Cart_Manager
     }
 
     /**
+     * AJAX handler for bulk adding test variants
+     */
+    public static function ajax_bulk_add_test_variants()
+    {
+        check_ajax_referer('wta_nonce', 'nonce');
+
+        $variant_ids = isset($_POST['variant_ids']) ? array_map('absint', $_POST['variant_ids']) : array();
+        $product_ids = isset($_POST['product_ids']) ? array_map('absint', $_POST['product_ids']) : array();
+
+        if (empty($variant_ids)) {
+            wp_send_json_error(array('message' => __('Geen producten geselecteerd.', 'woo-test-assortiment')));
+        }
+
+        $behavior = get_option('wta_cart_behavior', 'block');
+        $added_count = 0;
+
+        foreach ($variant_ids as $index => $variant_id) {
+            $parent_id = $product_ids[$index];
+            $exists = self::check_if_parent_in_cart($parent_id);
+
+            if ($exists) {
+                if ($behavior === 'block') {
+                    continue; // Skip already in cart if blocking
+                } else {
+                    self::remove_parent_from_cart($parent_id);
+                }
+            }
+
+            // Using WC() global to add to cart
+            $added = WC()->cart->add_to_cart($parent_id, 1, $variant_id);
+            if ($added) {
+                $added_count++;
+            }
+        }
+
+        if ($added_count > 0) {
+            $data = array(
+                'message' => sprintf(__('%d producten toegevoegd!', 'woo-test-assortiment'), $added_count),
+                'fragments' => apply_filters('woocommerce_add_to_cart_fragments', array()),
+                'cart_hash' => WC()->cart->get_cart_hash(),
+            );
+            wp_send_json_success($data);
+        } else {
+            wp_send_json_error(array('message' => __('Kon geen producten toevoegen.', 'woo-test-assortiment')));
+        }
+
+        wp_die();
+    }
+
+    /**
      * AJAX handler for adding test variant
      */
     public static function ajax_add_test_variant()

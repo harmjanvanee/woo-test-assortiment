@@ -66,6 +66,13 @@ class WTA_Settings_Page extends WC_Settings_Page
                 'default' => 'pa_inhoud-ml',
             ),
             array(
+                'title' => __('Assortiment Categorie', 'woo-test-assortiment'),
+                'desc' => __('Kies de categorie die getoond moet worden in het [test_assortiment_grid].', 'woo-test-assortiment'),
+                'id' => 'wta_assortiment_category',
+                'type' => 'select',
+                'options' => $this->get_category_options(),
+            ),
+            array(
                 'type' => 'sectionend',
                 'id' => 'wta_id_section',
             ),
@@ -150,6 +157,26 @@ class WTA_Settings_Page extends WC_Settings_Page
         );
 
         return apply_filters('woocommerce_get_settings_' . $this->id, $settings);
+    }
+
+    /**
+     * Get product categories for select options
+     */
+    private function get_category_options()
+    {
+        $options = array('' => __('Kies een categorie', 'woo-test-assortiment'));
+        $categories = get_terms(array(
+            'taxonomy' => 'product_cat',
+            'hide_empty' => false,
+        ));
+
+        if (!is_wp_error($categories) && !empty($categories)) {
+            foreach ($categories as $category) {
+                $options[$category->slug] = $category->name;
+            }
+        }
+
+        return $options;
     }
 }
 

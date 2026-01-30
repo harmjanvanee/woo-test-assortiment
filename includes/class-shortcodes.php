@@ -21,7 +21,98 @@ class WTA_Shortcodes
     {
         add_shortcode('test_add_button', array($this, 'render_add_button'));
         add_shortcode('test_coupon_from_order', array($this, 'render_coupon_from_order'));
+        add_shortcode('test_assortiment_grid', array($this, 'render_assortiment_grid'));
     }
+
+    /**
+     * [test_assortiment_grid]
+     */
+    public function render_assortiment_grid()
+    {
+        $category_slug = get_option('wta_assortiment_category');
+        if (!$category_slug) {
+            return current_user_can('manage_options') ? '<p>' . __('Selecteer een categorie in de instellingen.', 'woo-test-assortiment') . '</p>' : '';
+        }
+
+        $args = array(
+            'post_type' => 'product',
+            'posts_per_page' => -1,
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'product_cat',
+                    'field' => 'slug',
+                    'terms' => $category_slug,
+                ),
+            ),
+        );
+
+        $products = new WP_Query($args);
+
+        if (!$products->have_posts()) {
+            return '<p>' . __('Geen producten gevonden in deze categorie.', 'woo-test-assortiment') . '</p>';
+        }
+
+        ob_start();
+        ?>
+        <div class="wta-assortiment-container">
+            <div class="wta-product-grid">
+                <?php
+                while ($products->have_posts()):
+                    $products->the_post();
+                    $product = wc_get_product(get_the_ID());
+                    $test_variant_id = WTA_Product_Helper::get_instance()->get_test_variant_id($product->get_id());
+
+                    if (!$test_variant_id)
+                        continue;
+
+                    $test_variant = wc_get_product($test_variant_id);
+                    $price = $test_variant->get_price();
+                    $image = wp_get_attachment_image_src($product->get_image_id(), 'medium');
+                    $image_url = $image ? $image[0] : wc_placeholder_img_src();
+                    $in_stock = $test_variant->is_in_stock();
+                    ?>
+                    <div class="wta-product-card" data-product-id="<?php echo esc_attr($product->get_id()); ?>"
+                        data-variant-id="<?php echo esc_attr($test_variant_id); ?>" data-price="<?php echo esc_attr($price); ?>">
+                        <a href="<?php the_permalink(); ?>" class="wta-product-link">
+                            <div class="wta-product-image" style="background-image: url('<?php echo esc_url($image_url); ?>');">
+                            </div>
+                        </a>
+
+                        <div class="wta-stock-indicator <?php echo $in_stock ? 'in-stock' : 'out-of-stock'; ?>">
+                            <span class="wta-stock-dot"></span>
+                            <span
+                                class="wta-stock-text"><?php echo $in_stock ? __('Op voorraad', 'woo-test-assortiment') : __('Niet op voorraad', 'woo-test-assortiment'); ?></span>
+                        </div>
+
+                        <h3 class="wta-product-title"><?php the_title(); ?></h3>
+                        <div class="wta-product-price"><?php echo wc_price($price); ?></div>
+
+                        <button class="wta-toggle-select-button" data-product-id="<?php echo esc_attr($product->get_id()); ?>">
+                            <span class="wta-btn-text-add"><?php _e('Toevoegen', 'woo-test-assortiment'); ?></span>
+                            <span class="wta-btn-text-added"><?php _e('Toegevoegd', 'woo-test-assortiment'); ?></span>
+                        </button>
+                    </div>
+                <?php endwhile;
+                wp_reset_postdata(); ?>
+            </div>
+
+            <div class="wta-sticky-bar">
+                <div class="wta-sticky-bar-content">
+                    <div class="wta-totals">
+                        <span class="wta-total-count">0</span> <?php _e('producten geselecteerd', 'woo-test-assortiment'); ?>
+                        <div class="wta-total-price">€ 0,00</div>
+                    </div>
+                    <button class="wta-bulk-add-button button button-filled-hookers-green">
+                        <span class="wta-loader"></span>
+                        <span class="wta-bulk-btn-text"><?php _e('In winkelwagen', 'woo-test-assortiment'); ?></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <?php
+        return ob_get_clean();
+    }
+
 
     /**
      * [test_add_button product_id="123" label="Probeer"]

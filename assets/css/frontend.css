@@ -1,24 +1,241 @@
 /* WooCommerce Test Assortiment Frontend Styles */
-.button.button-filled-hookers-green {
-    background-color: #49796b !important;
-    /* Hooker's Green */
+
+:root {
+    --wta-hookers-green: #65806F;
+    --wta-smokey-black: #383838;
+    --wta-border-gray: #B5B5B5;
+    --wta-bg-gradient: radial-gradient(50% 50% at 50% 50%, rgba(68, 188, 117, 0.2) 0%, rgba(37, 157, 86, 0.2) 100%);
+}
+
+.wta-assortiment-container {
+    padding: 20px 0 100px 0;
+    font-family: 'Inter', sans-serif;
+}
+
+.wta-product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(212px, 1fr));
+    gap: 20px;
+    justify-items: center;
+}
+
+/* Product Card */
+.wta-product-card {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 11px 10px;
+    gap: 12px;
+    width: 212px;
+    background: #FFFFFF;
+    border: 0.7px solid var(--wta-border-gray);
+    border-radius: 12px;
+    transition: border 0.2s ease, transform 0.2s ease;
+    position: relative;
+    cursor: pointer;
+}
+
+.wta-product-card.selected {
+    border: 1.5px solid var(--wta-hookers-green);
+}
+
+/* Image Container */
+.wta-product-image {
+    width: 191px;
+    height: 184px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+    border-radius: 6px;
+    position: relative;
+}
+
+/* Radial Gradient Overlay for Image */
+.wta-product-card .wta-product-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--wta-bg-gradient);
+    z-index: -1;
+    border-radius: 6px;
+}
+
+/* Stock Indicator */
+.wta-stock-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 15px;
+}
+
+.wta-stock-dot {
+    width: 9px;
+    height: 9px;
+    background: var(--wta-hookers-green);
+    border-radius: 24px;
+}
+
+.wta-stock-text {
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 15px;
+    color: var(--wta-hookers-green);
+}
+
+/* Title & Price */
+.wta-product-title {
+    width: 191px;
+    margin: 0;
+    font-weight: 700;
+    font-size: 23px;
+    line-height: 28px;
+    color: var(--wta-smokey-black);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.wta-product-price {
+    width: 191px;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
+    color: var(--wta-smokey-black);
+}
+
+/* Toggle Button */
+.wta-toggle-select-button {
+    box-sizing: border-box;
+    width: 191px;
+    height: 41.37px;
+    background: #FFFFFF;
+    border: 1px solid var(--wta-hookers-green);
+    border-radius: 6px;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 22px;
+    text-align: center;
+    color: var(--wta-hookers-green);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.wta-product-card.selected .wta-toggle-select-button {
+    background: var(--wta-hookers-green);
+    color: #FFFFFF;
+}
+
+.wta-toggle-select-button .wta-btn-text-added {
+    display: none;
+}
+
+.wta-product-card.selected .wta-toggle-select-button .wta-btn-text-add {
+    display: none;
+}
+
+.wta-product-card.selected .wta-toggle-select-button .wta-btn-text-added {
+    display: inline;
+}
+
+/* Sticky Bar */
+.wta-sticky-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #FFFFFF;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    z-index: 9999;
+    display: none;
+    /* Hidden until something is selected */
+    border-top: 1px solid #eee;
+}
+
+.wta-sticky-bar.active {
+    display: block;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+.wta-sticky-bar-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wta-totals {
+    color: var(--wta-smokey-black);
+    font-size: 14px;
+}
+
+.wta-total-price {
+    font-weight: 700;
+    font-size: 24px;
+    color: var(--wta-hookers-green);
+}
+
+.wta-bulk-add-button {
+    min-width: 200px;
+    height: 50px;
+    background: var(--wta-hookers-green) !important;
     color: #ffffff !important;
-    border: none !important;
-    padding: 10px 20px !important;
-    cursor: pointer !important;
-    display: inline-block !important;
-    text-decoration: none !important;
-    font-weight: bold !important;
-    border-radius: 4px !important;
-    transition: background-color 0.3s ease !important;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
-.button.button-filled-hookers-green:hover {
-    background-color: #3d665a !important;
+.wta-bulk-add-button:hover {
+    background: #4d6153 !important;
 }
 
-.button.button-filled-hookers-green.added {
-    background-color: #2e8b57 !important;
-    /* Sea Green for success */
-    pointer-events: none;
+.wta-bulk-add-button .wta-loader {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, .3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.wta-bulk-add-button.loading .wta-loader {
+    display: block;
+}
+
+.wta-bulk-add-button.loading .wta-bulk-btn-text {
+    opacity: 0.5;
 }
