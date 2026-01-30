@@ -1,0 +1,12 @@
+# WordPress plugin .gitignore
+.DS_Store
+Thumbs.db
+*.log
+node_modules/
+.vscode/
+.idea/
+.gemini/
+brain/
+implementation_plan.md
+task.md
+walkthrough.md

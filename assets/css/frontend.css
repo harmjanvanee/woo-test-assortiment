@@ -1,0 +1,24 @@
+/* WooCommerce Test Assortiment Frontend Styles */
+.button.button-filled-hookers-green {
+    background-color: #49796b !important;
+    /* Hooker's Green */
+    color: #ffffff !important;
+    border: none !important;
+    padding: 10px 20px !important;
+    cursor: pointer !important;
+    display: inline-block !important;
+    text-decoration: none !important;
+    font-weight: bold !important;
+    border-radius: 4px !important;
+    transition: background-color 0.3s ease !important;
+}
+
+.button.button-filled-hookers-green:hover {
+    background-color: #3d665a !important;
+}
+
+.button.button-filled-hookers-green.added {
+    background-color: #2e8b57 !important;
+    /* Sea Green for success */
+    pointer-events: none;
+}
