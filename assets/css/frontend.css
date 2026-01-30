@@ -283,13 +283,11 @@
 
 /* Cart Grouping */
 .wta-parent-item td {
-    background-color: #f9f9f9 !important;
     border-bottom: none !important;
     font-weight: bold;
 }
 
 .wta-child-item td {
-    background-color: #f9f9f9 !important;
     border-top: none !important;
     padding-top: 0 !important;
 }

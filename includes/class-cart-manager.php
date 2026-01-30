@@ -25,6 +25,8 @@ class WTA_Cart_Manager
         add_filter('woocommerce_cart_item_class', array($this, 'add_cart_item_group_class'), 10, 3);
         add_filter('woocommerce_cart_item_name', array($this, 'add_cart_item_group_indent'), 10, 3);
         add_filter('woocommerce_cart_item_thumbnail', array($this, 'hide_parent_cart_item_thumbnail'), 10, 3);
+        add_filter('woocommerce_cart_item_price', array($this, 'hide_parent_cart_item_price'), 10, 3);
+        add_filter('woocommerce_cart_item_subtotal', array($this, 'hide_parent_cart_item_price'), 10, 3);
         add_filter('woocommerce_cart_item_quantity', array($this, 'handle_cart_item_quantity'), 10, 3);
 
         // Logic filters
@@ -215,6 +217,17 @@ class WTA_Cart_Manager
             return '';
         }
         return $thumbnail;
+    }
+
+    /**
+     * Hide price/subtotal for parent Probeerbox
+     */
+    public function hide_parent_cart_item_price($price, $cart_item, $cart_item_key)
+    {
+        if (isset($cart_item['wta_is_parent'])) {
+            return '';
+        }
+        return $price;
     }
 
     /**
