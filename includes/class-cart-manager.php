@@ -24,6 +24,11 @@ class WTA_Cart_Manager
         // Grouping filters
         add_filter('woocommerce_cart_item_class', array($this, 'add_cart_item_group_class'), 10, 3);
         add_filter('woocommerce_cart_item_name', array($this, 'add_cart_item_group_indent'), 10, 3);
+        add_filter('woocommerce_cart_item_thumbnail', array($this, 'hide_parent_cart_item_thumbnail'), 10, 3);
+        add_filter('woocommerce_cart_item_quantity', array($this, 'handle_cart_item_quantity'), 10, 3);
+
+        // Logic filters
+        add_action('woocommerce_cart_item_removed', array($this, 'auto_remove_children_when_parent_removed'), 10, 2);
     }
 
     /**
@@ -199,5 +204,51 @@ class WTA_Cart_Manager
             $name = '<span class="wta-cart-indent">↳ </span>' . $name;
         }
         return $name;
+    }
+
+    /**
+     * Hide thumbnail for parent Probeerbox
+     */
+    public function hide_parent_cart_item_thumbnail($thumbnail, $cart_item, $cart_item_key)
+    {
+        if (isset($cart_item['wta_is_parent'])) {
+            return '';
+        }
+        return $thumbnail;
+    }
+
+    /**
+     * Handle quantity display/logic for parent and child items
+     */
+    public function handle_cart_item_quantity($product_quantity, $cart_item_key, $cart_item)
+    {
+        // Hide quantity for parent
+        if (isset($cart_item['wta_is_parent'])) {
+            return '';
+        }
+
+        // Limit quantity to 1 for children
+        if (isset($cart_item['wta_parent_key'])) {
+            return '1'; // Just display 1, no input field
+        }
+
+        return $product_quantity;
+    }
+
+    /**
+     * Auto-remove child items when the parent Probeerbox is removed
+     */
+    public function auto_remove_children_when_parent_removed($cart_item_key, $cart)
+    {
+        $removed_item = $cart->removed_cart_contents[$cart_item_key];
+
+        if (isset($removed_item['wta_is_parent'])) {
+            // Remove all items that have this key as their parent
+            foreach ($cart->cart_contents as $child_key => $values) {
+                if (isset($values['wta_parent_key']) && $values['wta_parent_key'] === $cart_item_key) {
+                    $cart->remove_cart_item($child_key);
+                }
+            }
+        }
     }
 }

@@ -42,8 +42,8 @@
 
 /* Image Container */
 .wta-product-image {
-    width: 191px;
-    aspect-ratio: 2/3;
+    width: 100%;
+    aspect-ratio: 3/2;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -269,8 +269,20 @@
 }
 
 /* Cart Grouping */
+.wta-parent-item td {
+    background-color: #f9f9f9 !important;
+    border-bottom: none !important;
+    font-weight: bold;
+}
+
 .wta-child-item td {
-    background-color: #fcfcfc !important;
+    background-color: #f9f9f9 !important;
+    border-top: none !important;
+    padding-top: 0 !important;
+}
+
+.wta-parent-item .product-thumbnail {
+    display: none !important;
 }
 
 .wta-cart-indent {
@@ -280,10 +292,5 @@
 }
 
 .wta-parent-item {
-    font-weight: bold;
     border-top: 2px solid var(--wta-hookers-green) !important;
-}
-
-.wta-parent-item td {
-    background-color: #f4f4f4 !important;
 }
