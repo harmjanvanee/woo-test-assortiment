@@ -76,7 +76,7 @@ class WTA_Shortcodes
                         <a href="<?php the_permalink(); ?>" class="wta-product-link" target="_blank">
                             <div class="wta-product-image" style="background-image: url('<?php echo esc_url($image_url); ?>');">
                                 <div class="wta-image-overlay">
-                                    <span><?php _e('productdetails', 'woo-test-assortiment'); ?></span>
+                                    <span><?php _e('Bekijk product', 'woo-test-assortiment'); ?></span>
                                 </div>
                             </div>
                         </a>
@@ -87,7 +87,15 @@ class WTA_Shortcodes
                         </div>
 
                         <h3 class="wta-product-title"><?php the_title(); ?></h3>
-                        <div class="wta-product-variant-name"><?php echo esc_html($test_variant->get_attribute_summary()); ?></div>
+                        <?php
+                        $variant_display_name = array();
+                        foreach ($test_variant->get_variation_attributes() as $taxonomy => $term_slug) {
+                            $term = get_term_by('slug', $term_slug, $taxonomy);
+                            $variant_display_name[] = $term ? $term->name : str_replace('-', ' ', $term_slug);
+                        }
+                        $variant_name = implode(', ', $variant_display_name);
+                        ?>
+                        <div class="wta-product-variant-name"><?php echo esc_html($variant_name); ?></div>
                         <div class="wta-product-price"><?php echo wc_price($price); ?></div>
 
                         <button class="wta-toggle-select-button" data-product-id="<?php echo esc_attr($product->get_id()); ?>">
