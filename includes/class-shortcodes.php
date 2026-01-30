@@ -73,13 +73,15 @@ class WTA_Shortcodes
                     ?>
                     <div class="wta-product-card" data-product-id="<?php echo esc_attr($product->get_id()); ?>"
                         data-variant-id="<?php echo esc_attr($test_variant_id); ?>" data-price="<?php echo esc_attr($price); ?>">
-                        <a href="<?php the_permalink(); ?>" class="wta-product-link">
+                        <a href="<?php the_permalink(); ?>" class="wta-product-link" target="_blank">
                             <div class="wta-product-image" style="background-image: url('<?php echo esc_url($image_url); ?>');">
+                                <div class="wta-image-overlay">
+                                    <span><?php _e('productdetails', 'woo-test-assortiment'); ?></span>
+                                </div>
                             </div>
                         </a>
 
                         <div class="wta-stock-indicator <?php echo $in_stock ? 'in-stock' : 'out-of-stock'; ?>">
-                            <span class="wta-stock-dot"></span>
                             <span
                                 class="wta-stock-text"><?php echo $in_stock ? __('Op voorraad', 'woo-test-assortiment') : __('Niet op voorraad', 'woo-test-assortiment'); ?></span>
                         </div>

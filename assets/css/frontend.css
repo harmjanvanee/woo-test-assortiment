@@ -43,13 +43,14 @@
 /* Image Container */
 .wta-product-image {
     width: 191px;
-    height: 184px;
-    background-size: contain;
+    aspect-ratio: 2/3;
+    background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
     background-color: transparent;
-    border-radius: 6px;
+    border-radius: 12px;
     position: relative;
+    overflow: hidden;
 }
 
 /* Radial Gradient Overlay for Image */
@@ -62,7 +63,34 @@
     bottom: 0;
     background: var(--wta-bg-gradient);
     z-index: -1;
-    border-radius: 6px;
+    border-radius: 12px;
+}
+
+.wta-image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(43, 62, 48, 0.7);
+    /* Matching Hookers Green with opacity */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+}
+
+.wta-image-overlay span {
+    color: #FFFFFF;
+    font-weight: 500;
+    font-size: 14px;
+    text-transform: lowercase;
+}
+
+.wta-product-link:hover .wta-image-overlay {
+    opacity: 1;
 }
 
 /* Stock Indicator */
@@ -238,4 +266,24 @@
 
 .wta-bulk-add-button.loading .wta-bulk-btn-text {
     opacity: 0.5;
+}
+
+/* Cart Grouping */
+.wta-child-item td {
+    background-color: #fcfcfc !important;
+}
+
+.wta-cart-indent {
+    color: var(--wta-hookers-green);
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+.wta-parent-item {
+    font-weight: bold;
+    border-top: 2px solid var(--wta-hookers-green) !important;
+}
+
+.wta-parent-item td {
+    background-color: #f4f4f4 !important;
 }

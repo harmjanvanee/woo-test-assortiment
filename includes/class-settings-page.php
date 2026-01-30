@@ -73,6 +73,13 @@ class WTA_Settings_Page extends WC_Settings_Page
                 'options' => $this->get_category_options(),
             ),
             array(
+                'title' => __('Probeerbox Hoofdproduct', 'woo-test-assortiment'),
+                'desc' => __('Kies het product dat als ouder dient voor de geselecteerde items in de winkelwagen.', 'woo-test-assortiment'),
+                'id' => 'wta_probeerbox_id',
+                'type' => 'select',
+                'options' => $this->get_product_options(),
+            ),
+            array(
                 'type' => 'sectionend',
                 'id' => 'wta_id_section',
             ),
@@ -174,6 +181,24 @@ class WTA_Settings_Page extends WC_Settings_Page
             foreach ($categories as $category) {
                 $options[$category->slug] = $category->name;
             }
+        }
+
+        return $options;
+    }
+
+    /**
+     * Get products for select options
+     */
+    private function get_product_options()
+    {
+        $options = array('' => __('Kies een product', 'woo-test-assortiment'));
+        $products = wc_get_products(array(
+            'limit' => -1,
+            'status' => 'publish',
+        ));
+
+        foreach ($products as $product) {
+            $options[$product->get_id()] = $product->get_name();
         }
 
         return $options;

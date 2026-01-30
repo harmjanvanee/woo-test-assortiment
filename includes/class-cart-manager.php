@@ -20,6 +20,10 @@ class WTA_Cart_Manager
     private function __construct()
     {
         add_filter('woocommerce_add_to_cart_validation', array($this, 'validate_add_to_cart'), 10, 3);
+
+        // Grouping filters
+        add_filter('woocommerce_cart_item_class', array($this, 'add_cart_item_group_class'), 10, 3);
+        add_filter('woocommerce_cart_item_name', array($this, 'add_cart_item_group_indent'), 10, 3);
     }
 
     /**
@@ -37,7 +41,14 @@ class WTA_Cart_Manager
         }
 
         $behavior = get_option('wta_cart_behavior', 'block');
+        $probeerbox_id = get_option('wta_probeerbox_id');
         $added_count = 0;
+        $parent_cart_key = '';
+
+        // Add Probeerbox parent if selected
+        if ($probeerbox_id) {
+            $parent_cart_key = WC()->cart->add_to_cart($probeerbox_id, 1, 0, array(), array('wta_is_parent' => true));
+        }
 
         foreach ($variant_ids as $index => $variant_id) {
             $parent_id = $product_ids[$index];
@@ -51,8 +62,13 @@ class WTA_Cart_Manager
                 }
             }
 
-            // Using WC() global to add to cart
-            $added = WC()->cart->add_to_cart($parent_id, 1, $variant_id);
+            // Using WC() global to add to cart with parent reference
+            $cart_item_data = array();
+            if ($parent_cart_key) {
+                $cart_item_data['wta_parent_key'] = $parent_cart_key;
+            }
+
+            $added = WC()->cart->add_to_cart($parent_id, 1, $variant_id, array(), $cart_item_data);
             if ($added) {
                 $added_count++;
             }
@@ -159,5 +175,29 @@ class WTA_Cart_Manager
                 WC()->cart->remove_cart_item($cart_item_key);
             }
         }
+    }
+    /**
+     * Add class to cart items for grouping display
+     */
+    public function add_cart_item_group_class($class, $cart_item, $cart_item_key)
+    {
+        if (isset($cart_item['wta_parent_key'])) {
+            $class .= ' wta-child-item';
+        }
+        if (isset($cart_item['wta_is_parent'])) {
+            $class .= ' wta-parent-item';
+        }
+        return $class;
+    }
+
+    /**
+     * Add indentation to grouped items in cart
+     */
+    public function add_cart_item_group_indent($name, $cart_item, $cart_item_key)
+    {
+        if (isset($cart_item['wta_parent_key'])) {
+            $name = '<span class="wta-cart-indent">↳ </span>' . $name;
+        }
+        return $name;
     }
 }

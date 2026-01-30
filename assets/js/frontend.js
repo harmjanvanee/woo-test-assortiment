@@ -24,6 +24,33 @@ jQuery(document).ready(function ($) {
         }
     }
 
+    // Load from LocalStorage
+    function loadSelections() {
+        const saved = localStorage.getItem('wta_selected_products');
+        if (saved) {
+            try {
+                selectedProducts = JSON.parse(saved);
+                selectedProducts.forEach(product => {
+                    const $card = $(`.wta-product-card[data-product-id="${product.productId}"]`);
+                    if ($card.length) {
+                        $card.addClass('selected');
+                    }
+                });
+                updateStickyBar();
+            } catch (e) {
+                console.error('Error loading WTA selections:', e);
+            }
+        }
+    }
+
+    // Save to LocalStorage
+    function saveSelections() {
+        localStorage.setItem('wta_selected_products', JSON.stringify(selectedProducts));
+    }
+
+    // Initial Load
+    loadSelections();
+
     // Single Button Add (Legacy)
     $(document).on('click', '.wta-add-test-button', function (e) {
         e.preventDefault();
@@ -74,6 +101,7 @@ jQuery(document).ready(function ($) {
             selectedProducts = selectedProducts.filter(p => p.productId !== productId);
         }
 
+        saveSelections();
         updateStickyBar();
     });
 
@@ -99,12 +127,15 @@ jQuery(document).ready(function ($) {
             success: function (response) {
                 $btn.removeClass('loading');
                 if (response.success) {
+                    // Clear local storage on success
+                    localStorage.removeItem('wta_selected_products');
+
                     // Refresh cart fragments
                     if (response.data.fragments) {
                         $(document.body).trigger('added_to_cart', [response.data.fragments, response.data.cart_hash, $btn]);
                     }
 
-                    // Redirect to cart or checkout as is common for bulk adds
+                    // Redirect to cart
                     window.location.href = wc_add_to_cart_params.cart_url || '/winkelwagen';
                 } else {
                     alert(response.data.message || 'Er is een fout opgetreden.');
