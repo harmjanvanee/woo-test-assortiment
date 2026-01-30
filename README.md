@@ -1,47 +1,76 @@
 # WooCommerce Test Assortiment
 
-Deze plugin maakt het mogelijk om klanten direct een "test-variant" (de kleinste verpakking) van een product te laten toevoegen aan hun winkelwagen vanaf de assortimentpagina. Na aankoop ontvangen ze automatisch een kortingscode ter waarde van 50% van de test-varianten.
+## Doel van de Plugin
+De **WooCommerce Test Assortiment** plugin is ontworpen om de conversie te verhogen door klanten de mogelijkheid te bieden om "test-verpakkingen" of "proefmonsters" van producten te bestellen in een overzichtelijke interface. 
+
+Het hoofddoel is om een drempelverlagende "Kies & Mix" ervaring te creëren (de **Probeerbox**), waarbij klanten meerdere test-varianten kunnen selecteren en deze in één keer gegroepeerd aan hun winkelwagen kunnen toevoegen.
+
+---
+
+## Kernfunctionaliteiten
+
+### 1. Probeerbox Groepering
+- Klanten kunnen in de instellingen een "Hoofdproduct" (de Probeerbox) aanwijzen.
+- Alle geselecteerde test-varianten worden in de winkelwagen gekoppeld aan dit hoofdproduct.
+- **Slimme Logica**: Als het hoofdproduct uit de winkelwagen wordt verwijderd, worden automatisch alle bijbehorende test-producten ook verwijderd.
+- **Visuele Hiërarchie**: In de winkelwagen worden de sub-producten ingesprongen getoond onder de Probeerbox.
+
+### 2. Dynamisch Test-Assortiment (Shortcode)
+- Gebruik `[test_assortiment_grid]` om een grid van producten te tonen uit een specifieke categorie.
+- De plugin zoekt automatisch naar een variatie die het woord "test" in de naam heeft (geconfigureerd via de backend).
+- **Interactieve Card**:
+  - 3:2 Landscape afbeeldingen met hover-overlay.
+  - Directe selectie-modus (multi-select).
+  - Toont alleen de unieke variantnaam (bijv. "Klein") om herhaling te voorkomen.
+
+### 3. Selectie Persistentie
+- Gebruikerselecties worden opgeslagen in de `localStorage` van de browser.
+- Als een klant de pagina ververst of later terugkomt, blijven de geselecteerde producten in het grid bewaard.
+
+### 4. Responsieve UI/UX
+- Volledig responsive grid (mobile first).
+- "Sticky Bar" onderaan het scherm die de voortgang van de selectie toont en een snelle "Bestellen" knop bevat.
+
+---
+
+## Technische Architectuur
+
+De plugin is opgebouwd volgens een modulaire structuur voor eenvoudiger onderhoud:
+
+- `woo-test-assortiment.php`: Hoofdbestand, regelt de initialisatie en enqueuing van assets.
+- `includes/`:
+    - `class-shortcodes.php`: Verwerkt de `[test_assortiment_grid]` en andere shortcodes. Bevat de HTML-template voor de productkaarten.
+    - `class-cart-manager.php`: Bevat alle logica voor de winkelwagen, inclusief de groeperings-omgeving en AJAX handlers.
+    - `class-settings-page.php`: Regelt de instellingenpagina in de WooCommerce backend.
+    - `class-product-helper.php`: Helper functies voor het ophalen van variaties en categorieën.
+- `assets/`:
+    - `css/frontend.css`: De styling van het grid, de cards en de winkelwagen-groepering.
+    - `js/frontend.js`: Regelt de multi-select logica, localStorage en AJAX calls.
+
+---
+
+## Ontwikkeling & Onderhoud
+
+### Database Velden
+De plugin gebruikt de standaard WordPress `options` tabel:
+- `wta_assortment_category`: De geselecteerde categorie voor het grid.
+- `wta_probeerbox_id`: Het ID van het hoofdproduct in de winkelwagen.
+- `wta_cart_behavior`: Bepaalt wat er gebeurt als een product dubbel wordt toegevoegd (blokkeren of vervangen).
+
+### Belangrijke Filters/Hooks
+- `woocommerce_cart_item_class`: Gebruikt om `.wta-parent-item` en `.wta-child-item` klassen toe te voegen voor styling.
+- `woocommerce_cart_item_name`: Gebruikt om de inspringing (`↳`) toe te voegen in de winkelwagen.
+
+### Toekomstige Verbeteringen
+Mocht je de plugin willen uitbreiden, let dan op:
+1. **Winkelwagen Logica**: Kijk in `class-cart-manager.php` naar de `wta_parent_key` in de `cart_item_data`. Dit is de lijm die de producten bij elkaar houdt.
+2. **Styling**: De CSS gebruikt CSS Variables (`:root`) voor kleuren zoals `--wta-hookers-green`. Pas deze aan om de hele plugin in één keer te restylen.
+3. **Responsive**: De grid gebruikt `auto-fill` met `minmax(280px, 1fr)`. Dit zorgt ervoor dat het grid zichzelf vult zonder media queries.
+
+---
 
 ## Installatie
-
-1. Upload de map `woo-test-assortiment` naar de `/wp-content/plugins/` directory.
-2. Activeer de plugin via het WordPress 'Plugins' menu.
-3. Ga naar **WooCommerce > Instellingen > Test Assortiment** om de plugin te configureren.
-
-## Configuratie
-
-### Identificatie Test-variant
-De plugin moet weten welke variatie de "test-variant" is. Je kunt drie methodes kiezen:
-- **Variatie Attribuut**: Gebruik een specifiek attribuut (bv. `pa_test-variant`) met een specifieke waarde (bv. `yes`).
-- **Variatie Meta Key**: Gebruik een post meta key (bv. `_is_test_variant`) met de waarde `yes`.
-- **Fallback**: Automatisch de kleinste variatie bepalen op basis van een numeriek attribuut (bv. `pa_inhoud-ml`).
-
-### Winkelwagen Gedrag
-- **Block**: Voorkom dat klanten meerdere test-verpakkingen van hetzelfde product toevoegen. Toont een foutmelding.
-- **Replace**: Als er al een variant van hetzelfde product in de cart zit, wordt deze vervangen door de test-variant.
-
-## Producten Filteren op de Webshop
-Om alleen producten met een test-variant te tonen in je loopraster, raden we aan:
-1. Maak een WooCommerce categorie aan genaamd **"Probeer-assortiment"**.
-2. Voeg de **Parent Producten** die een test-variant hebben toe aan deze categorie.
-3. In Elementor stel je je loop-raster in om alleen producten uit deze categorie te tonen.
-
-De plugin zorgt er vervolgens voor dat de "Probeer" knop alleen verschijnt bij de producten die daadwerkelijk een variatie hebben die als test-variant is gemarkeerd.
-
-### Coupon Instellingen
-- **Trigger**: Wanneer de coupon wordt gegenereerd (bij status 'Verwerken' of 'Afgerond').
-- **Bedrag**: 50% van de som van alle test-varianten in de order (incl. of excl. BTW).
-- **Geldigheid**: Aantal dagen dat de code geldig is.
-- **Beperkingen**: De code is gekoppeld aan het e-mailadres van de koper en is slechts 1x bruikbaar.
-
-## Gebruik in Elementor / Shortcodes
-
-### Shortcodes
-- `[test_add_button label="Probeer"]`: Toont een AJAX-knop. Het `product_id` wordt automatisch herkend in een (WooCommerce) loop. Je kunt ook handmatig `product_id="123"` toevoegen.
-- `[test_coupon_from_order]`: Toont de gegenereerde couponcode op een bedankpagina.
-
-### Elementor Widget
-Zoek naar de widget **Test Add Button** in Elementor. Je kunt hier het label aanpassen en optioneel een specifiek Product ID opgeven (handig in custom loops).
-
-## Debugging
-Schakel 'Debug Mode' in de instellingen in om logs te bekijken via **WooCommerce > Status > Logs**.
+1. Upload de folder `woo-test-assortiment` naar `/wp-content/plugins/`.
+2. Activeer de plugin in WordPress.
+3. Ga naar **WooCommerce > Instellingen > Test Assortiment** om de juiste categorie en het Probeerbox-hoofdproduct in te stellen.
+4. Plaats de shortcode `[test_assortiment_grid]` op een pagina naar keuze.
