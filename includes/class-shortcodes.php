@@ -87,6 +87,7 @@ class WTA_Shortcodes
                         </div>
 
                         <h3 class="wta-product-title"><?php the_title(); ?></h3>
+                        <div class="wta-product-variant-name"><?php echo esc_html($test_variant->get_name()); ?></div>
                         <div class="wta-product-price"><?php echo wc_price($price); ?></div>
 
                         <button class="wta-toggle-select-button" data-product-id="<?php echo esc_attr($product->get_id()); ?>">
