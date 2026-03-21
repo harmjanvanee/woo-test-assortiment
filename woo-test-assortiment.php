@@ -8,11 +8,15 @@
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * WC requires at least: 5.0
+ * Update URI: https://github.com/harmjanvanee/woo-test-assortiment
  */
 
 if (!defined('ABSPATH')) {
 	exit;
 }
+
+require_once plugin_dir_path(__FILE__) . 'plugin-update-checker/plugin-update-checker.php';
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 // Define constants
 define('WTA_VERSION', '1.8.1');
@@ -134,3 +138,17 @@ function WTA()
 }
 
 add_action('plugins_loaded', 'WTA');
+
+/**
+ * Initialize Automatic Updates
+ */
+if (is_admin()) {
+	$updateChecker = PucFactory::buildUpdateChecker(
+		'https://github.com/harmjanvanee/woo-test-assortiment/',
+		__FILE__,
+		'woo-test-assortiment'
+	);
+
+	// Optional: If you're using GitHub releases, you can enable them.
+	$updateChecker->getVcsApi()->enableReleaseAssets();
+}

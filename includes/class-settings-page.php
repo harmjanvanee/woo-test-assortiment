@@ -116,7 +116,8 @@ class WTA_Settings_Page extends WC_Settings_Page
                 'default' => 30,
             ),
             array(
-                'title' => __('Individueel gebruik?', 'woo-test-assortiment'),
+                'title' => __('Alleen voor individueel gebruik?', 'woo-test-assortiment'),
+                'desc' => __('Vink dit aan als de coupon niet in combinatie met andere coupons gebruikt mag worden.', 'woo-test-assortiment'),
                 'id' => 'wta_coupon_individual',
                 'type' => 'checkbox',
                 'default' => 'yes',
