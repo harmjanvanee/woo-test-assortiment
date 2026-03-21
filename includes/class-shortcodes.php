@@ -34,20 +34,36 @@ class WTA_Shortcodes
             return current_user_can('manage_options') ? '<p>' . __('Selecteer een categorie in de instellingen.', 'woo-test-assortiment') . '</p>' : '';
         }
 
-        $subcategories = WTA_Product_Helper::get_instance()->get_assortment_subcategories($main_category_slug);
+        $hierarchy = WTA_Product_Helper::get_instance()->get_assortment_subcategories($main_category_slug);
 
         ob_start();
         ?>
         <div class="wta-assortiment-container" data-main-category="<?php echo esc_attr($main_category_slug); ?>">
             
-            <?php if (!empty($subcategories)): ?>
-            <div class="wta-filter-bar">
-                <button class="wta-filter-button active" data-category=""><?php _e('Alles', 'woo-test-assortiment'); ?></button>
-                <?php foreach ($subcategories as $slug => $name): ?>
-                    <button class="wta-filter-button" data-category="<?php echo esc_attr($slug); ?>">
-                        <?php echo esc_html($name); ?>
-                    </button>
-                <?php endforeach; ?>
+            <?php if (!empty($hierarchy)): ?>
+            <div class="wta-filter-section">
+                <!-- Primary Species Filter -->
+                <div class="wta-filter-bar primary">
+                    <button class="wta-filter-button active" data-category="" data-level="primary"><?php _e('Alles', 'woo-test-assortiment'); ?></button>
+                    <?php foreach ($hierarchy as $parent_slug => $data): ?>
+                        <button class="wta-filter-button" data-category="<?php echo esc_attr($parent_slug); ?>" data-level="primary">
+                            <?php echo esc_html($data['name']); ?>
+                        </button>
+                    <?php endforeach; ?>
+                </div>
+
+                <!-- Secondary Sub-category Filter (Dynamic) -->
+                <div class="wta-filter-bar secondary" style="display: none;">
+                    <?php foreach ($hierarchy as $parent_slug => $data): ?>
+                        <div class="wta-secondary-group" data-parent="<?php echo esc_attr($parent_slug); ?>" style="display: none;">
+                            <?php foreach ($data['children'] as $child_slug => $child_name): ?>
+                                <button class="wta-filter-button" data-category="<?php echo esc_attr($child_slug); ?>" data-level="secondary">
+                                    <?php echo esc_html($child_name); ?>
+                                </button>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             </div>
             <?php endif; ?>
 
@@ -68,7 +84,8 @@ class WTA_Shortcodes
                 </div>
             </div>
         </div>
-        <?php
+<?php
+        return ob_get_clean();
     }
 
     /**
@@ -156,7 +173,8 @@ class WTA_Shortcodes
                     <span class="wta-btn-text-added"><?php _e('Toegevoegd', 'woo-test-assortiment'); ?></span>
                 </button>
             </div>
-        <?php endwhile;
+        <?php endwhile; ?>
+        <?php
         wp_reset_postdata();
         return ob_get_clean();
     }

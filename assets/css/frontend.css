@@ -26,35 +26,86 @@
     pointer-events: none;
 }
 
-/* Filter Bar */
-.wta-filter-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 30px;
-    justify-content: center;
+/* Filter Bar - Pill Navigation Style (Robust Overrides) */
+/* Filter Section - Two Level Pill Navigation */
+.wta-assortiment-container .wta-filter-section {
+    margin-bottom: 35px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    align-items: center !important;
 }
 
-.wta-filter-button {
-    padding: 8px 20px;
-    background: #f5f5f5;
-    border: 1px solid var(--wta-border-gray);
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--wta-smokey-black);
-    transition: all 0.2s ease;
+.wta-assortiment-container .wta-filter-bar {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 6px 12px !important;
+    background: #FFFFFF !important;
+    border-radius: 50px !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+    border: 1px solid #E0E0E0 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
 }
 
-.wta-filter-button:hover {
-    background: #eeeeee;
+.wta-assortiment-container .wta-filter-bar.secondary {
+    background: #F5F5F5 !important;
+    padding: 4px 10px !important;
+    border-style: dashed !important;
+    box-shadow: none !important;
+    gap: 6px !important;
 }
 
-.wta-filter-button.active {
-    background: var(--wta-hookers-green);
-    color: #FFFFFF;
-    border-color: var(--wta-hookers-green);
+/* Common button styles inside filter bars */
+.wta-assortiment-container .wta-filter-bar .wta-filter-button,
+.wta-assortiment-container .wta-filter-bar button.wta-filter-button {
+    margin: 0 !important;
+    padding: 8px 18px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    border-radius: 25px !important;
+    border: 1px solid transparent !important;
+    background: transparent !important;
+    color: #555 !important;
+    cursor: pointer !important;
+    transition: all 0.25s ease !important;
+    white-space: nowrap !important;
+    box-shadow: none !important;
+    text-transform: none !important;
+}
+
+.wta-assortiment-container .wta-filter-bar.secondary .wta-filter-button {
+    padding: 6px 14px !important;
+    font-size: 12px !important;
+    background: #FFFFFF !important;
+    border-color: #E0E0E0 !important;
+}
+
+.wta-assortiment-container .wta-filter-button:hover {
+    background: #EEEEEE !important;
+    color: #000 !important;
+}
+
+/* Active states */
+.wta-assortiment-container .wta-filter-button.active {
+    background: #2C3E50 !important;
+    color: #FFFFFF !important;
+}
+
+.wta-assortiment-container .wta-filter-bar.primary .wta-filter-button.active {
+    background: var(--wta-hookers-green, #65806F) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 10px rgba(101, 128, 111, 0.3) !important;
+}
+
+.wta-assortiment-container .wta-filter-bar.secondary .wta-filter-button.active {
+    background: #2C3E50 !important;
+    border-color: #2C3E50 !important;
+    color: #FFFFFF !important;
 }
 
 .wta-no-products {

@@ -68,15 +68,40 @@ jQuery(document).ready(function ($) {
     function handleFilterClick(e) {
         e.preventDefault();
         const $btn = $(this);
-        if ($btn.hasClass('active')) return;
-
+        const level = $btn.data('level');
         const category = $btn.data('category');
-        const mainCategory = $('.wta-filter-bar').data('main-category');
+        const $container = $('.wta-assortiment-container');
+        const mainCategory = $container.data('main-category');
         const $grid = $('.wta-product-grid');
+        const $secondaryRow = $('.wta-filter-bar.secondary');
 
-        // Update UI
-        $('.wta-filter-button').removeClass('active');
-        $btn.addClass('active');
+        // Handle Primary Level
+        if (level === 'primary') {
+            $('.wta-filter-bar.primary .wta-filter-button').removeClass('active');
+            $btn.addClass('active');
+
+            // Reset secondary row
+            $('.wta-secondary-group').hide();
+            $('.wta-filter-bar.secondary .wta-filter-button').removeClass('active');
+            
+            if (category === '') {
+                $secondaryRow.hide();
+            } else {
+                const $group = $(`.wta-secondary-group[data-parent="${category}"]`);
+                if ($group.length && $group.find('.wta-filter-button').length > 0) {
+                    $secondaryRow.slideDown(200);
+                    $group.show();
+                } else {
+                    $secondaryRow.hide();
+                }
+            }
+        } 
+        // Handle Secondary Level
+        else {
+            $('.wta-secondary-group .wta-filter-button').removeClass('active');
+            $btn.addClass('active');
+        }
+
         $grid.addClass('loading');
 
         // AJAX call
@@ -92,16 +117,15 @@ jQuery(document).ready(function ($) {
             success: function(response) {
                 if (response.success) {
                     $grid.html(response.data.html);
-                    // Re-apply selections
+                    $grid.removeClass('loading');
+                    // Re-apply selections if needed
                     updateSelectionUI();
                 } else {
                     console.error('WTA Filter Error:', response.data.message);
+                    $grid.removeClass('loading');
                 }
             },
             error: function() {
-                console.error('WTA Filter Error: AJAX failed');
-            },
-            complete: function() {
                 $grid.removeClass('loading');
             }
         });

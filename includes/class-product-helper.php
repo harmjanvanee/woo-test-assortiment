@@ -121,7 +121,8 @@ class WTA_Product_Helper
     }
 
     /**
-     * Get all unique sub-categories from products in the main assortment category
+     * Get all unique sub-categories from products in the main assortment category,
+     * organized by their top-level parent (Honden, Katten, etc.)
      */
     public function get_assortment_subcategories($main_category_slug)
     {
@@ -143,7 +144,7 @@ class WTA_Product_Helper
         );
 
         $product_ids = get_posts($args);
-        $subcategories = array();
+        $hierarchy = array();
 
         if (!empty($product_ids)) {
             foreach ($product_ids as $product_id) {
@@ -154,14 +155,64 @@ class WTA_Product_Helper
                         if ($term->slug === $main_category_slug) {
                             continue;
                         }
-                        $subcategories[$term->slug] = $term->name;
+
+                        // Find the top-level parent of this term
+                        $parent_id = $this->get_top_level_parent_id($term->term_id);
+                        $parent = get_term($parent_id, 'product_cat');
+
+                        if (!$parent || is_wp_error($parent) || $parent->slug === $main_category_slug) {
+                            // If this IS the top-level term (or no parent found)
+                            if (!isset($hierarchy[$term->slug])) {
+                                $hierarchy[$term->slug] = array(
+                                    'name' => $term->name,
+                                    'children' => array()
+                                );
+                            }
+                        } else {
+                            // It has a top-level parent
+                            if (!isset($hierarchy[$parent->slug])) {
+                                $hierarchy[$parent->slug] = array(
+                                    'name' => $parent->name,
+                                    'children' => array()
+                                );
+                            }
+                            // Add this term as a child if it's not the parent itself
+                            if ($term->term_id !== $parent_id) {
+                                $hierarchy[$parent->slug]['children'][$term->slug] = $term->name;
+                            }
+                        }
                     }
                 }
             }
         }
 
-        asort($subcategories);
-        return $subcategories;
+        // Sort parents and children
+        ksort($hierarchy);
+        foreach ($hierarchy as $slug => $data) {
+            asort($hierarchy[$slug]['children']);
+        }
+
+        return $hierarchy;
+    }
+
+    /**
+     * Helper to find the highest parent ID for a term
+     */
+    private function get_top_level_parent_id($term_id)
+    {
+        $parent = get_term($term_id, 'product_cat');
+        if (!$parent || is_wp_error($parent)) {
+            return $term_id;
+        }
+
+        while ($parent->parent != 0) {
+            $next_parent = get_term($parent->parent, 'product_cat');
+            if (!$next_parent || is_wp_error($next_parent)) {
+                break;
+            }
+            $parent = $next_parent;
+        }
+        return $parent->term_id;
     }
 
     /**
