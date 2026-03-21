@@ -127,7 +127,15 @@ class WTA_Cart_Manager
         check_ajax_referer('wta_nonce', 'nonce');
 
         $main_category = isset($_POST['main_category']) ? sanitize_text_field($_POST['main_category']) : '';
-        $filter_category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
+        $filter_category = '';
+
+        if (isset($_POST['category'])) {
+            if (is_array($_POST['category'])) {
+                $filter_category = array_map('sanitize_text_field', $_POST['category']);
+            } else {
+                $filter_category = sanitize_text_field($_POST['category']);
+            }
+        }
 
         if (!$main_category) {
             wp_send_json_error(array('message' => __('Hoofdcategorie ontbreekt.', 'woo-test-assortiment')));

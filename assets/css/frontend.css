@@ -52,11 +52,12 @@
 }
 
 .wta-assortiment-container .wta-filter-bar.secondary {
-    background: #F5F5F5 !important;
-    padding: 4px 10px !important;
-    border-style: dashed !important;
+    background: transparent !important;
+    padding: 0 !important;
+    border: none !important;
     box-shadow: none !important;
-    gap: 6px !important;
+    gap: 10px !important;
+    justify-content: center !important;
 }
 
 /* Common button styles inside filter bars */

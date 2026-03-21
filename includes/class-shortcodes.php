@@ -116,11 +116,6 @@ class WTA_Shortcodes
      */
     public function render_grid_contents($main_category_slug, $filter_category_slug = '')
     {
-        $terms = array($main_category_slug);
-        if ($filter_category_slug) {
-            $terms[] = $filter_category_slug;
-        }
-
         $args = array(
             'post_type' => 'product',
             'posts_per_page' => -1,

@@ -98,8 +98,27 @@ jQuery(document).ready(function ($) {
         } 
         // Handle Secondary Level
         else {
-            $('.wta-secondary-group .wta-filter-button').removeClass('active');
-            $btn.addClass('active');
+            $btn.toggleClass('active');
+        }
+
+        // Collect all active categories for filtering
+        let filterCategories = [];
+        if (level === 'primary' && category === '') {
+            // 'Alles' selected
+            filterCategories = [];
+        } else if ($('.wta-secondary-group:visible').length) {
+            // Get all active sub-categories from the currently visible group
+            $('.wta-secondary-group:visible .wta-filter-button.active').each(function() {
+                filterCategories.push($(this).data('category'));
+            });
+            
+            // If no sub-categories are active, fall back to the primary category (parent)
+            if (filterCategories.length === 0) {
+                filterCategories.push($('.wta-filter-bar.primary .wta-filter-button.active').data('category'));
+            }
+        } else {
+            // No secondary groups, just use primary
+            filterCategories.push($('.wta-filter-bar.primary .wta-filter-button.active').data('category'));
         }
 
         const skeletonHtml = `
@@ -126,7 +145,7 @@ jQuery(document).ready(function ($) {
                 action: 'wta_get_filtered_products',
                 nonce: wta_vars.nonce,
                 main_category: mainCategory,
-                category: category
+                category: filterCategories // Send as array
             },
             success: function(response) {
                 if (response.success) {
