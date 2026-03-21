@@ -102,7 +102,21 @@ jQuery(document).ready(function ($) {
             $btn.addClass('active');
         }
 
-        $grid.addClass('loading');
+        const skeletonHtml = `
+            <div class="wta-skeleton-grid">
+                ${Array(8).fill(0).map(() => `
+                    <div class="wta-skeleton-card">
+                        <div class="wta-skeleton-img wta-skeleton-shimmer"></div>
+                        <div class="wta-skeleton-title wta-skeleton-shimmer"></div>
+                        <div class="wta-skeleton-meta wta-skeleton-shimmer"></div>
+                        <div class="wta-skeleton-price wta-skeleton-shimmer"></div>
+                        <div class="wta-skeleton-button wta-skeleton-shimmer"></div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+
+        $grid.addClass('loading').html(skeletonHtml);
 
         // AJAX call
         $.ajax({

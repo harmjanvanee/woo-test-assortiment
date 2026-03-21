@@ -140,13 +140,21 @@
 .wta-product-image {
     width: 100%;
     aspect-ratio: 3/2;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-color: transparent;
     border-radius: 12px;
     position: relative;
     overflow: hidden;
+}
+
+.wta-product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.wta-product-link:hover .wta-product-img {
+    transform: scale(1.05);
 }
 
 /* Radial Gradient Overlay for Image */
@@ -401,3 +409,85 @@
 .wta-parent-item {
     border-top: 2px solid var(--wta-hookers-green) !important;
 }
+
+/* Skeleton Loader */
+.wta-skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    width: 100%;
+}
+
+.wta-skeleton-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+.wta-skeleton-img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    background: #f0f0f0;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.wta-skeleton-shimmer::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0,
+        rgba(255, 255, 255, 0.5) 20%,
+        rgba(255, 255, 255, 0.8) 60%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    animation: wta-shimmer 2s infinite;
+}
+
+.wta-skeleton-title {
+    height: 20px;
+    width: 80%;
+    background: #f0f0f0;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.wta-skeleton-price {
+    height: 24px;
+    width: 40%;
+    background: #f0f0f0;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    margin-top: auto;
+}
+
+.wta-skeleton-button {
+    height: 38px;
+    width: 100%;
+    background: #f0f0f0;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    margin-top: 12px;
+}
+
+@keyframes wta-shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}

@@ -89,6 +89,28 @@ class WTA_Shortcodes
     }
 
     /**
+     * Render skeleton cards for loading state
+     */
+    public function render_skeleton_grid($count = 8)
+    {
+        ob_start();
+        ?>
+        <div class="wta-skeleton-grid">
+            <?php for ($i = 0; $i < $count; $i++): ?>
+                <div class="wta-skeleton-card">
+                    <div class="wta-skeleton-img wta-skeleton-shimmer"></div>
+                    <div class="wta-skeleton-title wta-skeleton-shimmer"></div>
+                    <div class="wta-skeleton-meta wta-skeleton-shimmer"></div>
+                    <div class="wta-skeleton-price wta-skeleton-shimmer"></div>
+                    <div class="wta-skeleton-button wta-skeleton-shimmer"></div>
+                </div>
+            <?php endfor; ?>
+        </div>
+        <?php
+        return ob_get_clean();
+    }
+
+    /**
      * Render just the product cards for the grid
      * Used by initial render and AJAX
      */
@@ -144,7 +166,11 @@ class WTA_Shortcodes
             <div class="wta-product-card" data-product-id="<?php echo esc_attr($product->get_id()); ?>"
                 data-variant-id="<?php echo esc_attr($test_variant_id); ?>" data-price="<?php echo esc_attr($price); ?>">
                 <a href="<?php the_permalink(); ?>" class="wta-product-link" target="_blank">
-                    <div class="wta-product-image" style="background-image: url('<?php echo esc_url($image_url); ?>');">
+                    <div class="wta-product-image">
+                        <img src="<?php echo esc_url($image_url); ?>" 
+                             alt="<?php the_title_attribute(); ?>" 
+                             loading="lazy" 
+                             class="wta-product-img">
                         <div class="wta-image-overlay">
                             <span><?php _e('Bekijk product', 'woo-test-assortiment'); ?></span>
                         </div>
