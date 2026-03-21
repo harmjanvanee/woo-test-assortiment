@@ -121,6 +121,50 @@ class WTA_Product_Helper
     }
 
     /**
+     * Get all unique sub-categories from products in the main assortment category
+     */
+    public function get_assortment_subcategories($main_category_slug)
+    {
+        if (!$main_category_slug) {
+            return array();
+        }
+
+        $args = array(
+            'post_type' => 'product',
+            'posts_per_page' => -1,
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'product_cat',
+                    'field' => 'slug',
+                    'terms' => $main_category_slug,
+                ),
+            ),
+            'fields' => 'ids',
+        );
+
+        $product_ids = get_posts($args);
+        $subcategories = array();
+
+        if (!empty($product_ids)) {
+            foreach ($product_ids as $product_id) {
+                $terms = get_the_terms($product_id, 'product_cat');
+                if ($terms && !is_wp_error($terms)) {
+                    foreach ($terms as $term) {
+                        // Skip the main category itself
+                        if ($term->slug === $main_category_slug) {
+                            continue;
+                        }
+                        $subcategories[$term->slug] = $term->name;
+                    }
+                }
+            }
+        }
+
+        asort($subcategories);
+        return $subcategories;
+    }
+
+    /**
      * Log debug message
      */
     public function log($message)

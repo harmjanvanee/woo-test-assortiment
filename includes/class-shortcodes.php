@@ -29,82 +29,30 @@ class WTA_Shortcodes
      */
     public function render_assortiment_grid()
     {
-        $category_slug = get_option('wta_assortiment_category');
-        if (!$category_slug) {
+        $main_category_slug = get_option('wta_assortiment_category');
+        if (!$main_category_slug) {
             return current_user_can('manage_options') ? '<p>' . __('Selecteer een categorie in de instellingen.', 'woo-test-assortiment') . '</p>' : '';
         }
 
-        $args = array(
-            'post_type' => 'product',
-            'posts_per_page' => -1,
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'product_cat',
-                    'field' => 'slug',
-                    'terms' => $category_slug,
-                ),
-            ),
-        );
-
-        $products = new WP_Query($args);
-
-        if (!$products->have_posts()) {
-            return '<p>' . __('Geen producten gevonden in deze categorie.', 'woo-test-assortiment') . '</p>';
-        }
+        $subcategories = WTA_Product_Helper::get_instance()->get_assortment_subcategories($main_category_slug);
 
         ob_start();
         ?>
-        <div class="wta-assortiment-container">
+        <div class="wta-assortiment-container" data-main-category="<?php echo esc_attr($main_category_slug); ?>">
+            
+            <?php if (!empty($subcategories)): ?>
+            <div class="wta-filter-bar">
+                <button class="wta-filter-button active" data-category=""><?php _e('Alles', 'woo-test-assortiment'); ?></button>
+                <?php foreach ($subcategories as $slug => $name): ?>
+                    <button class="wta-filter-button" data-category="<?php echo esc_attr($slug); ?>">
+                        <?php echo esc_html($name); ?>
+                    </button>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+
             <div class="wta-product-grid">
-                <?php
-                while ($products->have_posts()):
-                    $products->the_post();
-                    $product = wc_get_product(get_the_ID());
-                    $test_variant_id = WTA_Product_Helper::get_instance()->get_test_variant_id($product->get_id());
-
-                    if (!$test_variant_id)
-                        continue;
-
-                    $test_variant = wc_get_product($test_variant_id);
-                    $price = $test_variant->get_price();
-                    $image = wp_get_attachment_image_src($product->get_image_id(), 'medium');
-                    $image_url = $image ? $image[0] : wc_placeholder_img_src();
-                    $in_stock = $test_variant->is_in_stock();
-                    ?>
-                    <div class="wta-product-card" data-product-id="<?php echo esc_attr($product->get_id()); ?>"
-                        data-variant-id="<?php echo esc_attr($test_variant_id); ?>" data-price="<?php echo esc_attr($price); ?>">
-                        <a href="<?php the_permalink(); ?>" class="wta-product-link" target="_blank">
-                            <div class="wta-product-image" style="background-image: url('<?php echo esc_url($image_url); ?>');">
-                                <div class="wta-image-overlay">
-                                    <span><?php _e('Bekijk product', 'woo-test-assortiment'); ?></span>
-                                </div>
-                            </div>
-                        </a>
-
-                        <div class="wta-stock-indicator <?php echo $in_stock ? 'in-stock' : 'out-of-stock'; ?>">
-                            <span
-                                class="wta-stock-text"><?php echo $in_stock ? __('Op voorraad', 'woo-test-assortiment') : __('Niet op voorraad', 'woo-test-assortiment'); ?></span>
-                        </div>
-
-                        <h3 class="wta-product-title"><?php the_title(); ?></h3>
-                        <?php
-                        $variant_display_name = array();
-                        foreach ($test_variant->get_variation_attributes() as $taxonomy => $term_slug) {
-                            $term = get_term_by('slug', $term_slug, $taxonomy);
-                            $variant_display_name[] = $term ? $term->name : str_replace('-', ' ', $term_slug);
-                        }
-                        $variant_name = implode(', ', $variant_display_name);
-                        ?>
-                        <div class="wta-product-variant-name"><?php echo esc_html($variant_name); ?></div>
-                        <div class="wta-product-price"><?php echo wc_price($price); ?></div>
-
-                        <button class="wta-toggle-select-button" data-product-id="<?php echo esc_attr($product->get_id()); ?>">
-                            <span class="wta-btn-text-add"><?php _e('Toevoegen', 'woo-test-assortiment'); ?></span>
-                            <span class="wta-btn-text-added"><?php _e('Toegevoegd', 'woo-test-assortiment'); ?></span>
-                        </button>
-                    </div>
-                <?php endwhile;
-                wp_reset_postdata(); ?>
+                <?php echo $this->render_grid_contents($main_category_slug); ?>
             </div>
 
             <div class="wta-sticky-bar">
@@ -121,6 +69,95 @@ class WTA_Shortcodes
             </div>
         </div>
         <?php
+    }
+
+    /**
+     * Render just the product cards for the grid
+     * Used by initial render and AJAX
+     */
+    public function render_grid_contents($main_category_slug, $filter_category_slug = '')
+    {
+        $terms = array($main_category_slug);
+        if ($filter_category_slug) {
+            $terms[] = $filter_category_slug;
+        }
+
+        $args = array(
+            'post_type' => 'product',
+            'posts_per_page' => -1,
+            'tax_query' => array(
+                'relation' => 'AND',
+                array(
+                    'taxonomy' => 'product_cat',
+                    'field' => 'slug',
+                    'terms' => $main_category_slug,
+                ),
+            ),
+        );
+
+        if ($filter_category_slug) {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'product_cat',
+                'field' => 'slug',
+                'terms' => $filter_category_slug,
+            );
+        }
+
+        $products = new WP_Query($args);
+
+        if (!$products->have_posts()) {
+            return '<p class="wta-no-products">' . __('Geen producten gevonden in deze categorie.', 'woo-test-assortiment') . '</p>';
+        }
+
+        ob_start();
+        while ($products->have_posts()):
+            $products->the_post();
+            $product = wc_get_product(get_the_ID());
+            $test_variant_id = WTA_Product_Helper::get_instance()->get_test_variant_id($product->get_id());
+
+            if (!$test_variant_id)
+                continue;
+
+            $test_variant = wc_get_product($test_variant_id);
+            $price = $test_variant->get_price();
+            $image = wp_get_attachment_image_src($product->get_image_id(), 'medium');
+            $image_url = $image ? $image[0] : wc_placeholder_img_src();
+            $in_stock = $test_variant->is_in_stock();
+            ?>
+            <div class="wta-product-card" data-product-id="<?php echo esc_attr($product->get_id()); ?>"
+                data-variant-id="<?php echo esc_attr($test_variant_id); ?>" data-price="<?php echo esc_attr($price); ?>">
+                <a href="<?php the_permalink(); ?>" class="wta-product-link" target="_blank">
+                    <div class="wta-product-image" style="background-image: url('<?php echo esc_url($image_url); ?>');">
+                        <div class="wta-image-overlay">
+                            <span><?php _e('Bekijk product', 'woo-test-assortiment'); ?></span>
+                        </div>
+                    </div>
+                </a>
+
+                <div class="wta-stock-indicator <?php echo $in_stock ? 'in-stock' : 'out-of-stock'; ?>">
+                    <span
+                        class="wta-stock-text"><?php echo $in_stock ? __('Op voorraad', 'woo-test-assortiment') : __('Niet op voorraad', 'woo-test-assortiment'); ?></span>
+                </div>
+
+                <h3 class="wta-product-title"><?php the_title(); ?></h3>
+                <?php
+                $variant_display_name = array();
+                foreach ($test_variant->get_variation_attributes() as $taxonomy => $term_slug) {
+                    $term = get_term_by('slug', $term_slug, $taxonomy);
+                    $variant_display_name[] = $term ? $term->name : str_replace('-', ' ', $term_slug);
+                }
+                $variant_name = implode(', ', $variant_display_name);
+                ?>
+                <div class="wta-product-variant-name"><?php echo esc_html($variant_name); ?></div>
+                <div class="wta-product-price"><?php echo wc_price($price); ?></div>
+
+                <button class="wta-toggle-select-button" data-product-id="<?php echo esc_attr($product->get_id()); ?>">
+                    <span class="wta-btn-text-add"><?php _e('Toevoegen', 'woo-test-assortiment'); ?></span>
+                    <span class="wta-btn-text-added"><?php _e('Toegevoegd', 'woo-test-assortiment'); ?></span>
+                </button>
+            </div>
+        <?php endwhile;
+        wp_reset_postdata();
         return ob_get_clean();
     }
 

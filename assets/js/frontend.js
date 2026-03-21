@@ -1,7 +1,9 @@
 jQuery(document).ready(function ($) {
     let selectedProducts = [];
 
-    // Helper: Update Sticky Bar
+    /**
+     * Helper: Update Sticky Bar
+     */
     function updateStickyBar() {
         const $stickyBar = $('.wta-sticky-bar');
         const $count = $('.wta-total-count');
@@ -24,67 +26,91 @@ jQuery(document).ready(function ($) {
         }
     }
 
-    // Load from LocalStorage
+    /**
+     * Load from LocalStorage
+     */
     function loadSelections() {
         const saved = localStorage.getItem('wta_selected_products');
         if (saved) {
             try {
                 selectedProducts = JSON.parse(saved);
-                selectedProducts.forEach(product => {
-                    const $card = $(`.wta-product-card[data-product-id="${product.productId}"]`);
-                    if ($card.length) {
-                        $card.addClass('selected');
-                    }
-                });
-                updateStickyBar();
+                updateSelectionUI();
             } catch (e) {
                 console.error('Error loading WTA selections:', e);
+                selectedProducts = [];
             }
         }
     }
 
-    // Save to LocalStorage
+    /**
+     * Save to LocalStorage
+     */
     function saveSelections() {
         localStorage.setItem('wta_selected_products', JSON.stringify(selectedProducts));
     }
 
-    // Initial Load
-    loadSelections();
+    /**
+     * Update UI based on stored selections
+     */
+    function updateSelectionUI() {
+        $('.wta-product-card').removeClass('selected');
+        
+        selectedProducts.forEach(product => {
+            $(`.wta-product-card[data-product-id="${product.productId}"]`).addClass('selected');
+        });
 
-    // Single Button Add (Legacy)
-    $(document).on('click', '.wta-add-test-button', function (e) {
+        updateStickyBar();
+    }
+
+    /**
+     * Handle category filter clicks
+     */
+    function handleFilterClick(e) {
         e.preventDefault();
-        var $btn = $(this);
-        var productId = $btn.data('product-id');
-        var originalText = $btn.text();
-        if ($btn.hasClass('loading')) return;
-        $btn.addClass('loading').text('...');
+        const $btn = $(this);
+        if ($btn.hasClass('active')) return;
+
+        const category = $btn.data('category');
+        const mainCategory = $('.wta-filter-bar').data('main-category');
+        const $grid = $('.wta-product-grid');
+
+        // Update UI
+        $('.wta-filter-button').removeClass('active');
+        $btn.addClass('active');
+        $grid.addClass('loading');
+
+        // AJAX call
         $.ajax({
             url: wta_vars.ajax_url,
             type: 'POST',
             data: {
-                action: 'wta_add_test_variant',
+                action: 'wta_get_filtered_products',
                 nonce: wta_vars.nonce,
-                product_id: productId
+                main_category: mainCategory,
+                category: category
             },
-            success: function (response) {
-                $btn.removeClass('loading');
+            success: function(response) {
                 if (response.success) {
-                    $btn.text(response.data.message).addClass('added');
-                    if (response.data.fragments) {
-                        $(document.body).trigger('added_to_cart', [response.data.fragments, response.data.cart_hash, $btn]);
-                    }
-                    setTimeout(function () { $btn.text(originalText).removeClass('added'); }, 3000);
+                    $grid.html(response.data.html);
+                    // Re-apply selections
+                    updateSelectionUI();
                 } else {
-                    alert(response.data.message || 'Er is een fout opgetreden.');
-                    $btn.text(originalText);
+                    console.error('WTA Filter Error:', response.data.message);
                 }
+            },
+            error: function() {
+                console.error('WTA Filter Error: AJAX failed');
+            },
+            complete: function() {
+                $grid.removeClass('loading');
             }
         });
-    });
+    }
 
-    // Multi-select Toggle
-    $(document).on('click', '.wta-product-card', function (e) {
+    /**
+     * Multi-select Toggle
+     */
+    function toggleProductSelection(e) {
         // Don't toggle if clicking the link to product page
         if ($(e.target).closest('.wta-product-link').length) return;
 
@@ -96,17 +122,22 @@ jQuery(document).ready(function ($) {
         $card.toggleClass('selected');
 
         if ($card.hasClass('selected')) {
-            selectedProducts.push({ productId, variantId, price });
+            // Check if already in list to avoid duplicates
+            if (!selectedProducts.find(p => p.productId === productId)) {
+                selectedProducts.push({ productId, variantId, price });
+            }
         } else {
             selectedProducts = selectedProducts.filter(p => p.productId !== productId);
         }
 
         saveSelections();
         updateStickyBar();
-    });
+    }
 
-    // Bulk Add
-    $('.wta-bulk-add-button').on('click', function () {
+    /**
+     * Bulk Add to Cart
+     */
+    function handleBulkAdd() {
         const $btn = $(this);
         if ($btn.hasClass('loading') || selectedProducts.length === 0) return;
 
@@ -129,6 +160,7 @@ jQuery(document).ready(function ($) {
                 if (response.success) {
                     // Clear local storage on success
                     localStorage.removeItem('wta_selected_products');
+                    selectedProducts = [];
 
                     // Refresh cart fragments
                     if (response.data.fragments) {
@@ -146,5 +178,13 @@ jQuery(document).ready(function ($) {
                 alert('Er is een fout opgetreden bij het toevoegen aan de winkelwagen.');
             }
         });
-    });
+    }
+
+    // Events
+    $(document).on('click', '.wta-product-card', toggleProductSelection);
+    $(document).on('click', '.wta-filter-button', handleFilterClick);
+    $('.wta-bulk-add-button').on('click', handleBulkAdd);
+
+    // Initial Load
+    loadSelections();
 });

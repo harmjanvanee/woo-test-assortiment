@@ -26,6 +26,8 @@ class WTA_Cart_Manager
         add_filter('woocommerce_cart_item_price', array($this, 'hide_parent_cart_item_price'), 10, 3);
         add_filter('woocommerce_cart_item_subtotal', array($this, 'hide_parent_cart_item_price'), 10, 3);
         add_filter('woocommerce_cart_item_quantity', array($this, 'handle_cart_item_quantity'), 10, 3);
+        add_action('wp_ajax_wta_get_filtered_products', array($this, 'ajax_get_filtered_products'));
+        add_action('wp_ajax_nopriv_wta_get_filtered_products', array($this, 'ajax_get_filtered_products'));
 
         // Logic filters
         add_action('woocommerce_cart_item_removed', array($this, 'auto_remove_children_when_parent_removed'), 10, 2);
@@ -115,6 +117,25 @@ class WTA_Cart_Manager
         }
 
         wp_die();
+    }
+
+    /**
+     * AJAX handler for getting filtered products
+     */
+    public function ajax_get_filtered_products()
+    {
+        check_ajax_referer('wta_nonce', 'nonce');
+
+        $main_category = isset($_POST['main_category']) ? sanitize_text_field($_POST['main_category']) : '';
+        $filter_category = isset($_POST['category']) ? sanitize_text_field($_POST['category']) : '';
+
+        if (!$main_category) {
+            wp_send_json_error(array('message' => __('Hoofdcategorie ontbreekt.', 'woo-test-assortiment')));
+        }
+
+        $html = WTA_Shortcodes::get_instance()->render_grid_contents($main_category, $filter_category);
+
+        wp_send_json_success(array('html' => $html));
     }
 
 

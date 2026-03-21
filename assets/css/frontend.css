@@ -17,6 +17,51 @@
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
     justify-items: center;
+    position: relative;
+    min-height: 200px;
+}
+
+.wta-product-grid.loading {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Filter Bar */
+.wta-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 30px;
+    justify-content: center;
+}
+
+.wta-filter-button {
+    padding: 8px 20px;
+    background: #f5f5f5;
+    border: 1px solid var(--wta-border-gray);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--wta-smokey-black);
+    transition: all 0.2s ease;
+}
+
+.wta-filter-button:hover {
+    background: #eeeeee;
+}
+
+.wta-filter-button.active {
+    background: var(--wta-hookers-green);
+    color: #FFFFFF;
+    border-color: var(--wta-hookers-green);
+}
+
+.wta-no-products {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: #888;
 }
 
 /* Product Card */
