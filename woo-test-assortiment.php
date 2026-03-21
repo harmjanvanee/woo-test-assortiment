@@ -19,7 +19,7 @@ require_once plugin_dir_path(__FILE__) . 'plugin-update-checker/plugin-update-ch
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 // Define constants
-define('WTA_VERSION', '1.8.2');
+define('WTA_VERSION', '1.8.3');
 define('WTA_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WTA_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WTA_CSS_URL', WTA_PLUGIN_URL . 'assets/css/');
