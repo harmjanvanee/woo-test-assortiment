@@ -31,6 +31,9 @@ class WTA_Cart_Manager
 
         // Logic filters
         add_action('woocommerce_cart_item_removed', array($this, 'auto_remove_children_when_parent_removed'), 10, 2);
+
+        // Persist Cart Item Data to Order
+        add_action('woocommerce_checkout_create_order_line_item', array($this, 'save_test_flag_to_order_item'), 10, 4);
     }
 
     /**
@@ -61,7 +64,9 @@ class WTA_Cart_Manager
             $parent_id = $product_ids[$index];
 
             // Using WC() global to add to cart with parent reference
-            $cart_item_data = array();
+            $cart_item_data = array(
+                'is_wta_test' => true
+            );
             if ($parent_cart_key) {
                 $cart_item_data['wta_parent_key'] = $parent_cart_key;
             }
@@ -103,7 +108,11 @@ class WTA_Cart_Manager
             wp_send_json_error(array('message' => __('Geen testverpakking gevonden voor dit product.', 'woo-test-assortiment')));
         }
 
-        $added = WC()->cart->add_to_cart($product_id, 1, $test_variant_id);
+        $cart_item_data = array(
+            'is_wta_test' => true
+        );
+
+        $added = WC()->cart->add_to_cart($product_id, 1, $test_variant_id, array(), $cart_item_data);
 
         if ($added) {
             $data = array(
@@ -226,6 +235,16 @@ class WTA_Cart_Manager
                     $cart->remove_cart_item($child_key);
                 }
             }
+        }
+    }
+
+    /**
+     * Persist test flag to order item meta
+     */
+    public function save_test_flag_to_order_item($item, $cart_item_key, $values, $order)
+    {
+        if (isset($values['is_wta_test'])) {
+            $item->add_meta_data('_is_wta_test', 'yes');
         }
     }
 }

@@ -15,6 +15,10 @@ Deze plugin voegt een "Probeerbox" functionaliteit toe aan WooCommerce, waarbij 
 
 == Changelog ==
 
+= 1.8.5 =
+* Fix: Coupons worden nu alleen gegenereerd voor producten die specifiek via de Probeerbox-flow zijn toegevoegd.
+* Fix: Voorkomt onbedoelde korting bij reguliere aankopen van dezelfde producten.
+
 = 1.8.4 =
 * Toegevoegd: Changelog ondersteuning via readme.txt.
 * Opgelost: Versie mismatch in plugin header.

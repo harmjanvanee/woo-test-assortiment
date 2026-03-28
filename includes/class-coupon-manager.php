@@ -49,10 +49,10 @@ class WTA_Coupon_Manager
             $product_id = $item->get_product_id();
             $variation_id = $item->get_variation_id();
 
-            // Verify if this is a test variant
-            $expected_test_id = WTA_Product_Helper::get_instance()->get_test_variant_id($product_id);
+            // Verify if this is a test variant specifically from the WTA flow
+            $is_wta_test = $item->get_meta('_is_wta_test') === 'yes';
 
-            if ($variation_id > 0 && $variation_id == $expected_test_id) {
+            if ($is_wta_test) {
                 if ($calc_base === 'total') {
                     $test_variants_total += $item->get_total() + $item->get_total_tax();
                 } else {
