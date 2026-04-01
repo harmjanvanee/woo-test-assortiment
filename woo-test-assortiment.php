@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WooCommerce Test Assortiment
  * Description: Hiermee kunnen klanten een test-variant van een product toevoegen aan hun winkelwagen en ontvangen ze een kortingscode.
- * Version: 1.8.7
+ * Version: 1.8.8
  * Author: Antigravity
  * Text Domain: woo-test-assortiment
  * Requires at least: 5.8
@@ -19,7 +19,7 @@ require_once plugin_dir_path(__FILE__) . 'plugin-update-checker/plugin-update-ch
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 // Define constants
-define('WTA_VERSION', '1.8.7');
+define('WTA_VERSION', '1.8.8');
 define('WTA_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WTA_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WTA_CSS_URL', WTA_PLUGIN_URL . 'assets/css/');

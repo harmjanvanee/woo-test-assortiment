@@ -7,8 +7,8 @@ jQuery(document).ready(function ($) {
     function updateStickyBar() {
         const $stickyBar = $('.wta-sticky-bar');
         const $count = $('.wta-total-count');
-        const $origPrice = $('.wta-sticky-original-price');
-        const $actionPrice = $('.wta-sticky-action-price');
+        const $totalNow = $('.wta-sticky-total-now');
+        const $couponValue = $('.wta-sticky-coupon-value');
 
         const totalCount = selectedProducts.length;
         let totalPrice = 0;
@@ -23,8 +23,10 @@ jQuery(document).ready(function ($) {
         const formatPrice = (p) => '€ ' + p.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
         $count.text(totalCount);
-        $origPrice.text(formatPrice(totalPrice));
-        $actionPrice.text(formatPrice(totalActionPrice));
+        $totalNow.text(formatPrice(totalPrice));
+        $couponValue.text(formatPrice(totalActionPrice));
+        
+        // Hide/Show logic for the bar itself remains the same
 
         if (totalCount > 0) {
             $stickyBar.addClass('active');
