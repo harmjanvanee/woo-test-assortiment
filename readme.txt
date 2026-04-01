@@ -15,6 +15,12 @@ Deze plugin voegt een "Probeerbox" functionaliteit toe aan WooCommerce, waarbij 
 
 == Changelog ==
 
+= 1.9.0 =
+* Mobile: Added media queries to optimize the sticky bar for smaller screens.
+* Mobile: Implemented vertical stacking of price info and action button on mobile.
+* Mobile: Set product grid to single column layout on mobile for better visibility.
+* Mobile: Improved alignment and padding for a cleaner mobile interface.
+
 = 1.8.9 =
 * UI: Implemented "De Bonus Focus" layout for the sticky bar.
 * UI: Added a green "gratis shoptegoed" badge to highlight the future credit value.

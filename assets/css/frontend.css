@@ -566,4 +566,47 @@
     100% {
         transform: translateX(100%);
     }
-}
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .wta-sticky-bar {
+        padding: 15px;
+    }
+
+    .wta-sticky-bar-content {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .wta-sticky-info-stacked {
+        align-items: center;
+        text-align: center;
+    }
+
+    .wta-bulk-add-button {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 20px;
+    }
+
+    .wta-product-grid {
+        grid-template-columns: 1fr !important; /* Stack cards on mobile */
+        gap: 15px;
+    }
+
+    .wta-product-card {
+        padding: 12px;
+    }
+
+    .wta-category-filter {
+        gap: 8px;
+        justify-content: center;
+    }
+
+    .wta-filter-btn {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+}
