@@ -149,13 +149,11 @@ add_action('plugins_loaded', 'WTA');
 /**
  * Initialize Automatic Updates
  */
-if (is_admin()) {
-	$updateChecker = PucFactory::buildUpdateChecker(
-		'https://github.com/harmjanvanee/woo-test-assortiment/',
-		__FILE__,
-		'woo-test-assortiment'
-	);
+$updateChecker = PucFactory::buildUpdateChecker(
+	'https://github.com/harmjanvanee/woo-test-assortiment',
+	__FILE__,
+	'woo-test-assortiment'
+);
 
-	// Optional: If you're using GitHub releases, you can enable them.
-	$updateChecker->getVcsApi()->enableReleaseAssets();
-}
+// Optional: If you're using GitHub releases, you can enable them.
+$updateChecker->getVcsApi()->enableReleaseAssets();
