@@ -187,7 +187,17 @@ class WTA_Shortcodes
                 $variant_name = implode(', ', $variant_display_name);
                 ?>
                 <div class="wta-product-variant-name"><?php echo esc_html($variant_name); ?></div>
-                <div class="wta-product-price"><?php echo wc_price($price); ?></div>
+                <?php
+                $discount_rate = (int) get_option('wta_coupon_discount_rate', 50);
+                $action_price = $price * (1 - ($discount_rate / 100));
+                ?>
+                <div class="wta-product-price-container">
+                    <div class="wta-product-price">
+                        <span class="wta-original-price"><?php echo wc_price($price); ?></span>
+                        <span class="wta-action-price"><?php echo wc_price($action_price); ?></span>
+                    </div>
+                    <span class="wta-credit-label"><?php _e('Na verrekening tegoed', 'woo-test-assortiment'); ?></span>
+                </div>
 
                 <button class="wta-toggle-select-button" data-product-id="<?php echo esc_attr($product->get_id()); ?>">
                     <span class="wta-btn-text-add"><?php _e('Toevoegen', 'woo-test-assortiment'); ?></span>

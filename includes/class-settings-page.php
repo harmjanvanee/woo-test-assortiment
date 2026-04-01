@@ -116,6 +116,18 @@ class WTA_Settings_Page extends WC_Settings_Page
                 'default' => 30,
             ),
             array(
+                'title' => __('Kortingspercentage (%)', 'woo-test-assortiment'),
+                'desc' => __('Percentage van de test-aankopen dat als korting wordt teruggegeven (bijv. 50).', 'woo-test-assortiment'),
+                'id' => 'wta_coupon_discount_rate',
+                'type' => 'number',
+                'default' => 50,
+                'custom_attributes' => array(
+                    'min' => 0,
+                    'max' => 100,
+                    'step' => 1,
+                ),
+            ),
+            array(
                 'title' => __('Alleen voor individueel gebruik?', 'woo-test-assortiment'),
                 'desc' => __('Vink dit aan als de coupon niet in combinatie met andere coupons gebruikt mag worden.', 'woo-test-assortiment'),
                 'id' => 'wta_coupon_individual',

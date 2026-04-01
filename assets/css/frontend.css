@@ -240,12 +240,49 @@
     width: 100%;
 }
 
-.wta-product-price {
+.wta-product-price-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
     width: 100%;
-    font-weight: 500;
-    font-size: 18px;
-    line-height: 22px;
+    margin-top: 4px;
+}
+
+.wta-product-price {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.wta-original-price {
+    font-weight: 400;
+    font-size: 16px;
+    text-decoration: line-through;
+    color: #B5B5B5;
+}
+
+.wta-original-price bdi,
+.wta-original-price .woocommerce-Price-amount {
+    color: #B5B5B5 !important;
+}
+
+.wta-action-price {
+    font-weight: 700;
+    font-size: 22px;
     color: var(--wta-smokey-black);
+}
+
+.wta-credit-label {
+    display: inline-flex;
+    padding: 3px 10px;
+    border: 1px solid #D6BBAD;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #D6BBAD;
+    text-transform: uppercase;
+    width: fit-content;
+    line-height: 1;
 }
 
 .wta-product-link {

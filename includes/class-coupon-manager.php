@@ -64,7 +64,8 @@ class WTA_Coupon_Manager
         if ($test_variants_total <= 0)
             return;
 
-        $coupon_amount = $test_variants_total * 0.5;
+        $discount_rate = (int) get_option('wta_coupon_discount_rate', 50);
+        $coupon_amount = $test_variants_total * ($discount_rate / 100);
         $coupon_code = get_option('wta_coupon_prefix', 'TEST-') . strtoupper(wp_generate_password(8, false));
 
         // Create WooCommerce Coupon
