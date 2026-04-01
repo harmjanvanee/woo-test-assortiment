@@ -178,6 +178,21 @@ class WTA_Cart_Manager
         if (isset($cart_item['wta_parent_key'])) {
             $name = '<span class="wta-cart-indent">↳ </span>' . $name;
         }
+
+        if (isset($cart_item['wta_is_parent'])) {
+            $total_credit = 0;
+            foreach (WC()->cart->get_cart() as $child_key => $child_item) {
+                if (isset($child_item['wta_parent_key']) && $child_item['wta_parent_key'] === $cart_item_key) {
+                    $total_credit += $child_item['line_total'];
+                }
+            }
+
+            if ($total_credit > 0) {
+                $formatted_credit = wc_price($total_credit);
+                $name .= ' <span class="wta-cart-bonus-badge">' . sprintf(__('[ + %s gratis shoptegoed ]', 'woo-test-assortiment'), $formatted_credit) . '</span>';
+            }
+        }
+
         return $name;
     }
 
