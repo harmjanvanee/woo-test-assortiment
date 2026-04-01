@@ -82,7 +82,7 @@ class WTA_Shortcodes
                             <span class="wta-value wta-sticky-total-now">€ 0,00</span>
                         </div>
                         <div class="wta-sticky-bonus-row">
-                             <span class="wta-bonus-badge">
+                             <span class="wta-bonus-badge wta-info-trigger">
                                 <span class="wta-plus">+</span>
                                 <span class="wta-sticky-coupon-value">€ 0,00</span>
                                 <span class="wta-bonus-text"><?php _e('gratis shoptegoed', 'woo-test-assortiment'); ?></span>
@@ -93,6 +93,18 @@ class WTA_Shortcodes
                         <span class="wta-loader"></span>
                         <span class="wta-bulk-btn-text"><?php _e('Toevoegen aan winkelwagen', 'woo-test-assortiment'); ?></span>
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="wta-info-modal" class="wta-modal-overlay">
+            <div class="wta-modal-content">
+                <button class="wta-modal-close">&times;</button>
+                <div class="wta-modal-body">
+                    <?php 
+                    $popup_content = get_option('wta_info_popup_content', __('Hoe werkt het? Bij aankoop van deze Probeerbox ontvang je een kortingscode t.w.v. het shoptegoed bedrag voor je volgende bestelling!', 'woo-test-assortiment'));
+                    echo wp_kses_post(wpautop($popup_content)); 
+                    ?>
                 </div>
             </div>
         </div>
@@ -208,7 +220,7 @@ class WTA_Shortcodes
                         <span class="wta-original-price"><?php echo wc_price($price); ?></span>
                         <span class="wta-action-price"><?php echo wc_price($action_price); ?></span>
                     </div>
-                    <span class="wta-credit-label"><?php _e('Na verrekening tegoed', 'woo-test-assortiment'); ?></span>
+                    <span class="wta-credit-label wta-info-trigger"><?php _e('Na verrekening tegoed', 'woo-test-assortiment'); ?></span>
                 </div>
 
                 <button class="wta-toggle-select-button" data-product-id="<?php echo esc_attr($product->get_id()); ?>">

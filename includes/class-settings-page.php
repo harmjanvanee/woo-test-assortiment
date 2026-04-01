@@ -80,6 +80,14 @@ class WTA_Settings_Page extends WC_Settings_Page
                 'options' => $this->get_product_options(),
             ),
             array(
+                'title' => __('Informatie Popup Inhoud', 'woo-test-assortiment'),
+                'desc' => __('De tekst die getoond wordt in de informatie popup (bijv. uitleg over shoptegoed). HTML is toegestaan.', 'woo-test-assortiment'),
+                'id' => 'wta_info_popup_content',
+                'type' => 'textarea',
+                'default' => __('Hoe werkt het? Bij aankoop van deze Probeerbox ontvang je een kortingscode t.w.v. het shoptegoed bedrag voor je volgende bestelling!', 'woo-test-assortiment'),
+                'css' => 'min-width: 300px; min-height: 100px;',
+            ),
+            array(
                 'type' => 'sectionend',
                 'id' => 'wta_id_section',
             ),

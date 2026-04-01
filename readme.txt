@@ -4,7 +4,7 @@ Tags: woocommerce, cart, trial, products
 Requires at least: 5.8
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 1.9.1
+Stable tag: 1.10.0
 License: GPLv2 or later
 
 Hiermee kunnen klanten een test-variant van een product toevoegen aan hun winkelwagen en ontvangen ze een kortingscode.
@@ -14,6 +14,12 @@ Hiermee kunnen klanten een test-variant van een product toevoegen aan hun winkel
 Deze plugin voegt een "Probeerbox" functionaliteit toe aan WooCommerce, waarbij klanten proefmonsters kunnen selecteren en toevoegen aan hun winkelwagen.
 
 == Changelog ==
+
+= 1.10.0 =
+* Feature: Added an information popup (modal) that explains the shoptegoed process.
+* Backend: Popup content is now editable via WooCommerce > Settings > Test Assortiment.
+* UI: Added clickable triggers on the bonus badge (sticky bar) and credit labels (product cards).
+* Improvement: Modern modal design with blur background and smooth animations.
 
 = 1.9.1 =
 * Mobile: Fixed overflow issue where product cards were wider than the screen.

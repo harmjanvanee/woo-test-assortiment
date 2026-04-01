@@ -246,11 +246,43 @@ jQuery(document).ready(function ($) {
         });
     }
 
+    /**
+     * Info Modal Logic
+     */
+    function setupInfoModal() {
+        const $modal = $('#wta-info-modal');
+        if (!$modal.length) return;
+
+        $(document).on('click', '.wta-info-trigger', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $modal.addClass('is-active');
+            $('body').addClass('wta-modal-open');
+        });
+
+        $(document).on('click', '.wta-modal-close, .wta-modal-overlay', function(e) {
+            // If click inside content (but not the close button), do nothing
+            if ($(e.target).closest('.wta-modal-content').length && !$(e.target).is('.wta-modal-close')) {
+                return;
+            }
+            $modal.removeClass('is-active');
+            $('body').removeClass('wta-modal-open');
+        });
+
+        $(document).on('keydown', function(e) {
+            if (e.key === 'Escape' && $modal.hasClass('is-active')) {
+                $modal.removeClass('is-active');
+                $('body').removeClass('wta-modal-open');
+            }
+        });
+    }
+
     // Events
     $(document).on('click', '.wta-product-card', toggleProductSelection);
     $(document).on('click', '.wta-filter-button', handleFilterClick);
-    $('.wta-bulk-add-button').on('click', handleBulkAdd);
+    $(document).on('click', '.wta-bulk-add-button', handleBulkAdd);
 
     // Initial Load
     loadSelections();
+    setupInfoModal();
 });
