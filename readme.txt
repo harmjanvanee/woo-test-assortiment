@@ -4,7 +4,7 @@ Tags: woocommerce, cart, trial, products
 Requires at least: 5.8
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 1.8.6
+Stable tag: 1.8.7
 License: GPLv2 or later
 
 Hiermee kunnen klanten een test-variant van een product toevoegen aan hun winkelwagen en ontvangen ze een kortingscode.
@@ -14,6 +14,11 @@ Hiermee kunnen klanten een test-variant van een product toevoegen aan hun winkel
 Deze plugin voegt een "Probeerbox" functionaliteit toe aan WooCommerce, waarbij klanten proefmonsters kunnen selecteren en toevoegen aan hun winkelwagen.
 
 == Changelog ==
+
+= 1.8.7 =
+* Feature: Added action price and credit label to the sticky bar.
+* Fix: Improved alignment of price and label on product cards to keep them on the same line.
+* Improvement: Dynamic discount percentage now localized for frontend JS calculations.
 
 = 1.8.6 =
 * Feature: Dynamisch instelbaar kortingspercentage (nu standaard op 50%).

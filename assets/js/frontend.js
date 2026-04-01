@@ -7,7 +7,8 @@ jQuery(document).ready(function ($) {
     function updateStickyBar() {
         const $stickyBar = $('.wta-sticky-bar');
         const $count = $('.wta-total-count');
-        const $price = $('.wta-total-price');
+        const $origPrice = $('.wta-sticky-original-price');
+        const $actionPrice = $('.wta-sticky-action-price');
 
         const totalCount = selectedProducts.length;
         let totalPrice = 0;
@@ -16,8 +17,14 @@ jQuery(document).ready(function ($) {
             totalPrice += parseFloat(product.price);
         });
 
+        const discountRate = wta_vars.discount_rate / 100;
+        const totalActionPrice = totalPrice * discountRate;
+
+        const formatPrice = (p) => '€ ' + p.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
         $count.text(totalCount);
-        $price.text('€ ' + totalPrice.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        $origPrice.text(formatPrice(totalPrice));
+        $actionPrice.text(formatPrice(totalActionPrice));
 
         if (totalCount > 0) {
             $stickyBar.addClass('active');

@@ -75,7 +75,13 @@ class WTA_Shortcodes
                 <div class="wta-sticky-bar-content">
                     <div class="wta-totals">
                         <span class="wta-total-count">0</span> <?php _e('producten geselecteerd', 'woo-test-assortiment'); ?>
-                        <div class="wta-total-price">€ 0,00</div>
+                        <div class="wta-sticky-price-container">
+                            <div class="wta-total-price">
+                                <span class="wta-sticky-original-price">€ 0,00</span>
+                                <span class="wta-sticky-action-price">€ 0,00</span>
+                            </div>
+                            <span class="wta-sticky-credit-label"><?php _e('Na verrekening tegoed', 'woo-test-assortiment'); ?></span>
+                        </div>
                     </div>
                     <button class="wta-bulk-add-button button button-filled-hookers-green">
                         <span class="wta-loader"></span>

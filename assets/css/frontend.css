@@ -242,8 +242,10 @@
 
 .wta-product-price-container {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
     width: 100%;
     margin-top: 4px;
 }
@@ -372,10 +374,41 @@
     font-size: 14px;
 }
 
+.wta-sticky-price-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 5px;
+}
+
 .wta-total-price {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.wta-sticky-original-price {
+    font-size: 16px;
+    text-decoration: line-through;
+    color: #B5B5B5;
+}
+
+.wta-sticky-action-price {
     font-weight: 700;
     font-size: 24px;
     color: var(--wta-hookers-green);
+}
+
+.wta-sticky-credit-label {
+    display: inline-flex;
+    padding: 3px 10px;
+    border: 1px solid #D6BBAD;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #D6BBAD;
+    text-transform: uppercase;
+    line-height: 1;
 }
 
 .wta-bulk-add-button {
