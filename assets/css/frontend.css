@@ -570,6 +570,12 @@
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
+    .wta-assortiment-container {
+        padding: 10px 10px 120px 10px; /* More bottom padding for taller sticky bar */
+        overflow-x: hidden;
+        box-sizing: border-box;
+    }
+
     .wta-sticky-bar {
         padding: 15px;
     }
@@ -577,27 +583,40 @@
     .wta-sticky-bar-content {
         flex-direction: column;
         gap: 15px;
-        text-align: center;
+        align-items: flex-start; /* Information left aligned */
+        text-align: left;
     }
 
     .wta-sticky-info-stacked {
-        align-items: center;
-        text-align: center;
+        align-items: flex-start;
+        text-align: left;
+        width: 100%;
     }
 
     .wta-bulk-add-button {
         width: 100%;
         justify-content: center;
-        padding: 12px 20px;
+        padding: 14px 20px;
+        font-size: 16px;
     }
 
     .wta-product-grid {
-        grid-template-columns: 1fr !important; /* Stack cards on mobile */
-        gap: 15px;
+        grid-template-columns: 1fr !important; /* Single column */
+        gap: 20px;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .wta-product-card {
-        padding: 12px;
+        padding: 15px;
+        width: 100%;
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+
+    .wta-product-title {
+        font-size: 20px; /* Slightly smaller for mobile */
+        white-space: normal; /* Allow wrapping on mobile if title is long */
     }
 
     .wta-category-filter {
@@ -606,7 +625,7 @@
     }
 
     .wta-filter-btn {
-        padding: 6px 12px;
-        font-size: 13px;
+        padding: 8px 16px;
+        font-size: 14px;
     }
 }
