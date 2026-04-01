@@ -369,48 +369,51 @@
     align-items: center;
 }
 
-.wta-totals {
-    color: var(--wta-smokey-black);
-    font-size: 14px;
-}
-
-.wta-sticky-pricing {
+.wta-sticky-info-stacked {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    margin-top: 10px;
+    text-align: left;
 }
 
-.wta-sticky-price-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-    font-size: 14px;
-}
-
-.wta-sticky-price-row .wta-label {
+.wta-sticky-count-row {
+    font-size: 13px;
     color: #666;
 }
 
-.wta-sticky-price-row .wta-value {
+.wta-sticky-total-row {
+    font-size: 16px;
     font-weight: 700;
-    font-size: 15px;
     color: var(--wta-smokey-black);
 }
 
-.wta-sticky-price-row.highlight {
-    padding-bottom: 2px;
+.wta-sticky-total-row .wta-label {
+    margin-right: 5px;
 }
 
-.wta-sticky-price-row.highlight .wta-label {
-    color: var(--wta-hookers-green);
+.wta-sticky-bonus-row {
+    margin-top: 2px;
+}
+
+.wta-bonus-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background-color: var(--wta-hookers-green);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
     font-weight: 600;
 }
 
-.wta-sticky-price-row.highlight .wta-value {
-    font-size: 20px;
-    color: var(--wta-hookers-green);
+.wta-plus {
+    font-size: 15px;
+    margin-right: 2px;
+}
+
+.wta-bonus-text {
+    margin-left: 4px;
 }
 
 .wta-bulk-add-button {

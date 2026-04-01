@@ -73,22 +73,25 @@ class WTA_Shortcodes
 
             <div class="wta-sticky-bar">
                 <div class="wta-sticky-bar-content">
-                    <div class="wta-totals">
-                        <span class="wta-total-count">0</span> <?php _e('producten geselecteerd', 'woo-test-assortiment'); ?>
-                        <div class="wta-sticky-pricing">
-                            <div class="wta-sticky-price-row">
-                                <span class="wta-label"><?php _e('Totaal nu te betalen:', 'woo-test-assortiment'); ?></span>
-                                <span class="wta-value wta-sticky-total-now">€ 0,00</span>
-                            </div>
-                            <div class="wta-sticky-price-row highlight">
-                                <span class="wta-label"><?php _e('Waarde tegoedbon:', 'woo-test-assortiment'); ?></span>
-                                <span class="wta-value wta-sticky-coupon-value">€ 0,00</span>
-                            </div>
+                    <div class="wta-sticky-info-stacked">
+                        <div class="wta-sticky-count-row">
+                            <span class="wta-total-count">0</span> <?php _e('producten geselecteerd', 'woo-test-assortiment'); ?>
+                        </div>
+                        <div class="wta-sticky-total-row">
+                            <span class="wta-label"><?php _e('Totaal nu te betalen:', 'woo-test-assortiment'); ?></span>
+                            <span class="wta-value wta-sticky-total-now">€ 0,00</span>
+                        </div>
+                        <div class="wta-sticky-bonus-row">
+                             <span class="wta-bonus-badge">
+                                <span class="wta-plus">+</span>
+                                <span class="wta-sticky-coupon-value">€ 0,00</span>
+                                <span class="wta-bonus-text"><?php _e('gratis shoptegoed', 'woo-test-assortiment'); ?></span>
+                             </span>
                         </div>
                     </div>
                     <button class="wta-bulk-add-button button button-filled-hookers-green">
                         <span class="wta-loader"></span>
-                        <span class="wta-bulk-btn-text"><?php _e('In winkelwagen', 'woo-test-assortiment'); ?></span>
+                        <span class="wta-bulk-btn-text"><?php _e('Toevoegen aan winkelwagen', 'woo-test-assortiment'); ?></span>
                     </button>
                 </div>
             </div>
