@@ -710,26 +710,3 @@
         font-size: 14px;
     }
 }
-
-/* Cart Credit Badge */
-.wta-cart-bonus-badge {
-    display: inline-block;
-    background-color: #00c875;
-    color: #fff;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: 600;
-    margin-left: 10px;
-    vertical-align: middle;
-}
-
-.wta-cart-bonus-badge span,
-.wta-cart-bonus-badge bdi {
-    color: #fff !important;
-}
-
-.wta-cart-indent {
-    color: #999;
-    margin-right: 5px;
-}
