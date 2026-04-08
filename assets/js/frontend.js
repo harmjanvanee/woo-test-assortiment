@@ -1,5 +1,19 @@
 jQuery(document).ready(function ($) {
     let selectedProducts = [];
+    let currentNonce = wta_vars.nonce;
+
+    /**
+     * Fetch a fresh nonce from the server (cache-plugin compatible).
+     * Calls back with the updated nonce when done.
+     */
+    function refreshNonce(callback) {
+        $.post(wta_vars.ajax_url, { action: 'wta_refresh_nonce' }, function (response) {
+            if (response && response.success) {
+                currentNonce = response.data.nonce;
+            }
+            callback();
+        }).fail(callback);
+    }
 
     /**
      * Helper: Update Sticky Bar
@@ -152,7 +166,7 @@ jQuery(document).ready(function ($) {
             type: 'POST',
             data: {
                 action: 'wta_get_filtered_products',
-                nonce: wta_vars.nonce,
+                nonce: currentNonce,
                 main_category: mainCategory,
                 category: filterCategories // Send as array
             },
@@ -160,15 +174,40 @@ jQuery(document).ready(function ($) {
                 if (response.success) {
                     $grid.html(response.data.html);
                     $grid.removeClass('loading');
-                    // Re-apply selections if needed
                     updateSelectionUI();
                 } else {
                     console.error('WTA Filter Error:', response.data.message);
                     $grid.removeClass('loading');
                 }
             },
-            error: function() {
-                $grid.removeClass('loading');
+            error: function(xhr) {
+                // 403 = stale nonce from cache; retry once with a fresh nonce
+                if (xhr.status === 403) {
+                    refreshNonce(function() {
+                        $.ajax({
+                            url: wta_vars.ajax_url,
+                            type: 'POST',
+                            data: {
+                                action: 'wta_get_filtered_products',
+                                nonce: currentNonce,
+                                main_category: mainCategory,
+                                category: filterCategories
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    $grid.html(response.data.html);
+                                    updateSelectionUI();
+                                }
+                                $grid.removeClass('loading');
+                            },
+                            error: function() {
+                                $grid.removeClass('loading');
+                            }
+                        });
+                    });
+                } else {
+                    $grid.removeClass('loading');
+                }
             }
         });
     }
@@ -212,38 +251,44 @@ jQuery(document).ready(function ($) {
         const variantIds = selectedProducts.map(p => p.variantId);
         const productIds = selectedProducts.map(p => p.productId);
 
-        $.ajax({
-            url: wta_vars.ajax_url,
-            type: 'POST',
-            data: {
-                action: 'wta_bulk_add_test_variants',
-                nonce: wta_vars.nonce,
-                variant_ids: variantIds,
-                product_ids: productIds
-            },
-            success: function (response) {
-                $btn.removeClass('loading');
-                if (response.success) {
-                    // Clear local storage on success
-                    localStorage.removeItem('wta_selected_products');
-                    selectedProducts = [];
+        function doAjax(isRetry) {
+            $.ajax({
+                url: wta_vars.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'wta_bulk_add_test_variants',
+                    nonce: currentNonce,
+                    variant_ids: variantIds,
+                    product_ids: productIds
+                },
+                success: function (response) {
+                    $btn.removeClass('loading');
+                    if (response.success) {
+                        localStorage.removeItem('wta_selected_products');
+                        selectedProducts = [];
 
-                    // Refresh cart fragments
-                    if (response.data.fragments) {
-                        $(document.body).trigger('added_to_cart', [response.data.fragments, response.data.cart_hash, $btn]);
+                        if (response.data.fragments) {
+                            $(document.body).trigger('added_to_cart', [response.data.fragments, response.data.cart_hash, $btn]);
+                        }
+
+                        window.location.href = wc_add_to_cart_params.cart_url || '/winkelwagen';
+                    } else {
+                        alert(response.data.message || 'Er is een fout opgetreden.');
                     }
-
-                    // Redirect to cart
-                    window.location.href = wc_add_to_cart_params.cart_url || '/winkelwagen';
-                } else {
-                    alert(response.data.message || 'Er is een fout opgetreden.');
+                },
+                error: function (xhr) {
+                    // 403 = nonce expired (common with cache plugins). Retry once with a fresh nonce.
+                    if (!isRetry && xhr.status === 403) {
+                        refreshNonce(function () { doAjax(true); });
+                    } else {
+                        $btn.removeClass('loading');
+                        alert('Er is een fout opgetreden bij het toevoegen aan de winkelwagen.');
+                    }
                 }
-            },
-            error: function () {
-                $btn.removeClass('loading');
-                alert('Er is een fout opgetreden bij het toevoegen aan de winkelwagen.');
-            }
-        });
+            });
+        }
+
+        doAjax(false);
     }
 
     /**
