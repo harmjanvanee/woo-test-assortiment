@@ -37,11 +37,36 @@ class WTA_Cart_Manager
     }
 
     /**
+     * AJAX handler to return a fresh nonce (cache-plugin compatible)
+     */
+    public static function ajax_refresh_nonce()
+    {
+        wp_send_json_success(array('nonce' => wp_create_nonce('wta_nonce')));
+    }
+
+    /**
+     * Ensure WooCommerce cart and session are loaded.
+     * Required for guest users when a cache plugin serves the page without full PHP init.
+     */
+    private static function ensure_cart_loaded()
+    {
+        if (is_null(WC()->cart)) {
+            wc_load_cart();
+        }
+    }
+
+    /**
      * AJAX handler for bulk adding test variants
      */
     public static function ajax_bulk_add_test_variants()
     {
         check_ajax_referer('wta_nonce', 'nonce');
+        self::ensure_cart_loaded();
+
+        if (is_null(WC()->cart)) {
+            wp_send_json_error(array('message' => __('Winkelwagen kon niet worden geladen. Probeer de pagina te vernieuwen.', 'woo-test-assortiment')));
+            return;
+        }
 
         $variant_ids = isset($_POST['variant_ids']) ? array_map('absint', $_POST['variant_ids']) : array();
         $product_ids = isset($_POST['product_ids']) ? array_map('absint', $_POST['product_ids']) : array();
@@ -97,6 +122,12 @@ class WTA_Cart_Manager
     public static function ajax_add_test_variant()
     {
         check_ajax_referer('wta_nonce', 'nonce');
+        self::ensure_cart_loaded();
+
+        if (is_null(WC()->cart)) {
+            wp_send_json_error(array('message' => __('Winkelwagen kon niet worden geladen. Probeer de pagina te vernieuwen.', 'woo-test-assortiment')));
+            return;
+        }
 
         $product_id = isset($_POST['product_id']) ? absint($_POST['product_id']) : 0;
         if (!$product_id) {
